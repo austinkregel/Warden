@@ -24,7 +24,6 @@ return [
    */
   'using' => [
     'fontawesome' => true,
-    'bootstrap' => true,
     'csrf' => true,
   ],
   'views' => [
