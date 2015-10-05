@@ -2,29 +2,29 @@
 
 use Illuminate\Support\ServiceProvider;
 
-class WardenServiceProvider extends ServiceProvider {
+class WardenServiceProvider extends ServiceProvider
+{
+    /**
+     * Indicates if loading of the provider is deferred.
+     *
+     * @var bool
+     */
+    protected $defer = false;
 
-	/**
-	 * Indicates if loading of the provider is deferred.
-	 *
-	 * @var bool
-	 */
-	protected $defer = false;
-
-	/**
-	 * Register the service provider.
-	 *
-	 * @return void
-	 */
-	public function register()
-	{
-		//
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        //
     $this->app->register('Kregel\\FormModel\\FormModelServiceProvider');
-		$loader = \Illuminate\Foundation\AliasLoader::getInstance();
-    $loader->alias('FormModel', 'Kregel\\FormModel\\FormModel');
-	}
+        $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+        $loader->alias('FormModel', 'Kregel\\FormModel\\FormModel');
+    }
 
-		/**
+        /**
    * Bootstrap any application services.
    *
    * @return void
@@ -42,7 +42,7 @@ class WardenServiceProvider extends ServiceProvider {
       ]);
       // Define our custom authentication to make sure
       // that the user is logged in!
-      
+
       $this->app['router']->middleware('custom-auth', config('warden.auth.middleware'));
   }
 
@@ -62,13 +62,13 @@ class WardenServiceProvider extends ServiceProvider {
       }
   }
 
-	/**
-	 * Get the services provided by the provider.
-	 *
-	 * @return array
-	 */
-	public function provides()
-	{
-		return [];
-	}
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [];
+    }
 }

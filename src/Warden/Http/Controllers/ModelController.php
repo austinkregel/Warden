@@ -204,7 +204,7 @@ class ModelController extends BaseController
             if (!empty($model->$key)) {
                 // If the value is not equal to the desired value
               if ($model->$key !== $value) {
-                // Remove any extra spaces
+                  // Remove any extra spaces
                 $model->$key = $this->manageInput($key, $value);
               }
             } elseif (Input::has('_relations')) {

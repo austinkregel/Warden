@@ -5,7 +5,7 @@ return [
      * Set this to your own custom middleware, just please know that it 
      * should ensure that the user is logged in.
      */
-    'middleware' => Kregel\Warden\Http\Middleware\Authentication::class,  
+    'middleware' => Kregel\Warden\Http\Middleware\Authentication::class,
     'middleware_name' => 'custom-auth',
     /**
      * Name of a login route, it's recommended to have it named, but incase
@@ -14,8 +14,10 @@ return [
     'route' => 'login',
     /**
      * If the desired route does not exist then use the one below instead
+     * If you plan to use this with Spark, edi the fail_over_route to
+     * /login  instead of /auth/login
      */
-    'fail_over_route' => '/login',
+    'fail_over_route' => '/auth/login',
   ],
   /**
    * Actual application configuration

@@ -14,6 +14,7 @@ namespace Kregel\Warden\Http\Middleware;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 use Route;
+
 class Authentication
 {
     /**
@@ -47,10 +48,11 @@ class Authentication
             if ($request->ajax()) {
                 return response('Unauthorized.', 401);
             } else {
-                if(Route::has(config('warden.auth.route')))
-                  return redirect()->intended(route(config('warden.auth.route')));
-                else
-                  return redirect()->intended(url(config('warden.auth.fail_over_route')));
+                if (Route::has(config('warden.auth.route'))) {
+                    return redirect()->intended(route(config('warden.auth.route')));
+                } else {
+                    return redirect()->intended(url(config('warden.auth.fail_over_route')));
+                }
             }
         }
 
