@@ -24,6 +24,7 @@ All you need is to do the following, then add your models to the `config/warden.
   ```
   3.  Publish the config file! This should be able to be done with `php artisan vendor:publish` once published, add in your
       models to the `config/warden.php` file and tweak it they way you need it..
+
       ```php
       'models' => [
         'user' => \App\User::class,
