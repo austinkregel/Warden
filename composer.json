@@ -1,0 +1,21 @@
+{
+    "name": "kregel/warden",
+    "description": "",
+    "authors": [
+        {
+            "name": "Austin Kregel",
+            "email": "me@austinkregel.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "5.0.*",
+        "kregel/formmodel":"dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kregel\\Warden": "src/Warden"
+        }
+    },
+    "minimum-stability": "stable"
+}
