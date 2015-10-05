@@ -1,7 +1,10 @@
+
 # What is this package?
-This package was created to help decrease the time it takes to echo out 
-a form relating to a given [Model](http://laravel.com/docs/master/eloquent) 
-while still giving the developer the ultimate amount of flexibility . 
+This package was created to help decrease the time it takes to build a project
+which needs to create, delete, and edit the project's [Model](http://laravel.com/docs/master/eloquent)s.
+
+# Warden?
+The project is named Warden because much like a prison warden, it can bring in an inmate (create a new item), take out an inmate (delete an item), or make changes to what the inmate can do (edit an item). By no means is it limited to just a User's model. It (so far) can work an any model.
 
 # What do I need to do to make it work?
 All you need is to do the following, then add your models to the `config/warden.php`
