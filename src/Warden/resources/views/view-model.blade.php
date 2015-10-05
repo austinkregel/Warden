@@ -13,8 +13,8 @@
     <div class="col-md-8">
       <div class="panel panel-default ">
         <div class="panel-heading">
-          <h3>You're editing a {{ ucwords($model_name) }}</h3>
-        </div><!-- /.box-header -->
+          <h3>You're upserting a {{ ucwords($model_name) }}</h3>
+        </div>
         <div class="panel-body">
           {!! $form !!}
         </div>

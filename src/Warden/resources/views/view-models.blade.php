@@ -4,22 +4,24 @@
   @include('warden::shared.errors')
 @stop
  
-@section('content')
+@section('styles')
 <style>
 .method-button{
   background: none;
   border: none;
-  color: #2B5A84;
+  color: #337ab7;
   padding: 0;
   margin: 0;
 }
 .method-button:hover,
 .method-button:active,
 .method-button:focus{
-  color:#18334a;
+  color:#18334a; 
   outline: none; 
 }
 </style>
+@stop
+@section('content')
 <div class="container">
   <div class="row">
     <div class="col-md-4">
