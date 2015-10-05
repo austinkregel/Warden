@@ -21,7 +21,7 @@ All you need is to do the following, then add your models to the `config/warden.
   ```
   3.  Publish the config file! This should be able to be done with `php artisan vendor:publish` once published, add in your
       models to the `config/warden.php` file and tweak it they way you need it..
-  4.  Once you have everything installed and configured, you actually can navigate to your website by going to http://<yourwebsite.com>/warden/<yourmodel>s/manage
+  4.  Once you have everything installed and configured, you actually can navigate to your website by going to http://(yourwebsite.com)/warden/(yourmodel)s/manage
       So that means that if I had this installed on my website and set up with my users model I would go to http://austinkregel.com/warden/users/manage
 # Questions?
 Email me (my email is on [my github page](http://github.com/austinkregel)), or you can drop an issue. :)
