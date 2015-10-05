@@ -9,7 +9,7 @@
 .method-button{
   background: none;
   border: none;
-  color: #337ab7;
+  color: #2B5A84;
   padding: 0;
   margin: 0;
 }
