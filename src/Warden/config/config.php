@@ -17,16 +17,6 @@ return [
      */
     'fail_over_route' => '/login',
   ],
-  'user' => [ 
-    /**
-     * Just to make sure that there are fewer things to edit, 
-     * by default we use the auth.model configuration from
-     * the default location to ensure this will work oob
-     */
-    'model' => empty(config('auth.model'))?
-                  \App\User::class:
-                  config('auth.model')
-  ],
   /**
    * Actual application configuration
    */
@@ -38,10 +28,13 @@ return [
   'views' => [
     'base-layout' => 'warden::layouts.base'
   ],
+  /**
+    * Just to make sure that there are fewer things to edit, 
+    * by default we use the auth.model configuration from
+    * the default location to ensure this will work oob
+    */
   'models' => [
-    'user' =>  empty(config('auth.model'))?
-                  \App\User::class:
-                  config('auth.model'),
-    'team' => App\Team::class,
+    'user' => \App\User::class,
+                  
   ]
 ];
