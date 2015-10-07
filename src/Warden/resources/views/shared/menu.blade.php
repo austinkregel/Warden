@@ -5,7 +5,7 @@
 	<div class="panel-body">
 		<div class="spark-settings-tabs">
 			<ul class="nav spark-settings-tabs-stacked" role="tablist">
-		  @foreach(config('warden.models') as $menuitem => $classname)
+		  @foreach(config('kregel.warden.models') as $menuitem => $classname)
 				<!-- Settings Dropdown -->
 				<!-- Authenticated Right Dropdown -->
         <li class="dropdown">

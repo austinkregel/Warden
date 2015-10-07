@@ -18,13 +18,14 @@ class WardenServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
-    $this->app->register('Kregel\\FormModel\\FormModelServiceProvider');
+        // Register the FormModel Provider.
+        $this->app->register('Kregel\\FormModel\\FormModelServiceProvider');
         $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+        // Register the alias.
         $loader->alias('FormModel', 'Kregel\\FormModel\\FormModel');
     }
 
-        /**
+  /**
    * Bootstrap any application services.
    *
    * @return void
@@ -38,12 +39,12 @@ class WardenServiceProvider extends ServiceProvider
       $this->loadViewsFrom(__DIR__.'/resources/views', 'warden');
       $this->publishes([
           __DIR__.'/resources/views' => base_path('resources/views/vendor/warden'),
-          __DIR__.'/config/config.php' => config_path('warden.php'),
+          __DIR__.'/config/config.php' => config_path('kregel/warden.php'),
       ]);
       // Define our custom authentication to make sure
       // that the user is logged in!
 
-      $this->app['router']->middleware('custom-auth', config('warden.auth.middleware'));
+      $this->app['router']->middleware('custom-auth', config('kregel.warden.auth.middleware'));
   }
 
   /**

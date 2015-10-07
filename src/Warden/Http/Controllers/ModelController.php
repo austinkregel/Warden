@@ -12,7 +12,7 @@ class ModelController extends BaseController
 {
     public function __construct()
     {
-        $this->middleware(config('warden.auth.middleware_name'));
+        $this->middleware(config('kregel.warden.auth.middleware_name'));
     }
   /**
    * @param    String $model_name A key in the warden.models configuration
@@ -180,7 +180,7 @@ class ModelController extends BaseController
    */
   private function findModel($model_name, $id = null)
   {
-      $model = config('warden.models.'.$model_name);
+      $model = config('kregel.warden.models.'.$model_name);
       if (empty($model)) {
           throw new \Exception('There is no model by the name {'. $model_name.'}');
       }

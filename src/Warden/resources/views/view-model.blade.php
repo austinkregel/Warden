@@ -1,4 +1,4 @@
-@extends(config('warden.views.base-layout'))
+@extends(config('kregel.warden.views.base-layout'))
 
 @section('errors')
   @include('warden::shared.errors')

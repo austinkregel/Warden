@@ -48,10 +48,10 @@ class Authentication
             if ($request->ajax()) {
                 return response('Unauthorized.', 401);
             } else {
-                if (Route::has(config('warden.auth.route'))) {
-                    return redirect()->intended(route(config('warden.auth.route')));
+                if (Route::has(config('kregel.warden.auth.route'))) {
+                    return redirect()->intended(route(config('kregel.warden.auth.route')));
                 } else {
-                    return redirect()->intended(url(config('warden.auth.fail_over_route')));
+                    return redirect()->intended(url(config('kregel.warden.auth.fail_over_route')));
                 }
             }
         }
