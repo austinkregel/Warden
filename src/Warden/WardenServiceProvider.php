@@ -19,10 +19,10 @@ class WardenServiceProvider extends ServiceProvider
     public function register()
     {
         // Register the FormModel Provider.
-        $this->app->register('Kregel\\FormModel\\FormModelServiceProvider');
+        $this->app->register(\Kregel\FormModel\FormModelServiceProvider::class);
         $loader = \Illuminate\Foundation\AliasLoader::getInstance();
         // Register the alias.
-        $loader->alias('FormModel', 'Kregel\\FormModel\\FormModel');
+        $loader->alias('FormModel', Kregel\FormModel\FormModel::class);
     }
 
   /**

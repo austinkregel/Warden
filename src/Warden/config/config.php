@@ -35,7 +35,7 @@ return [
     * the default location to ensure this will work oob
     */
   'models' => [
-    'user' => \App\User::class,
+    'user' => App\User::class,
                   
   ]
 ];
