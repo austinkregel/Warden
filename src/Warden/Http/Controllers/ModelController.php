@@ -35,11 +35,11 @@ class ModelController extends BaseController
     $field_names = !empty($model->getVisible()) ?
                           $model->getVisible() :
                           $model->getFillable();
-                          
-
-      return view('warden::view-models')
+    // Paginate the results to plan for lots of items within the database.
+    $desired_objects = $model::paginate(50);
+    return view('warden::view-models')
             ->with('field_names', ($field_names))
-            ->with('models', $model::all())
+            ->with('models', $desired_objects)
             ->with('model_name', $model_name);
   }
   /**

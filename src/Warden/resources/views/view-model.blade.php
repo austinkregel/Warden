@@ -16,7 +16,9 @@
           <h3>You're upserting a {{ ucwords($model_name) }}</h3>
         </div>
         <div class="panel-body">
-          {!! $form !!}
+          <div id="page">
+          {!! $models->fragment('page')->render() !!}
+          </div>
         </div>
       </div>
     </div>
