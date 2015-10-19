@@ -5,7 +5,7 @@ namespace Kregel\Warden\Http\Controllers;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Database\Eloquent\Model;
 use Session;
-use FormModel;
+use Kregel\FormModel\FormModel;
 use Input;
 
 class ModelController extends BaseController
