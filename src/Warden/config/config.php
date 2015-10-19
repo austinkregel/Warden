@@ -1,5 +1,6 @@
 <?php
 return [
+  'route' => 'warden',
   'auth' =>[
     /**
      * Set this to your own custom middleware, just please know that it 
