@@ -17,7 +17,7 @@
         </div>
         <div class="panel-body">
           <div id="page">
-          {!! $models->fragment('page')->render() !!}
+            {!! $form !!}
           </div>
         </div>
       </div>

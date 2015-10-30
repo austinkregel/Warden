@@ -2,13 +2,12 @@
 
 namespace Kregel\Warden\Http\Controllers;
 
-use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Database\Eloquent\Model;
 use Session;
 use Kregel\FormModel\FormModel;
 use Input;
 
-class ModelController extends BaseController
+class ModelController extends Controller
 {
     public function __construct()
     {
@@ -180,7 +179,7 @@ class ModelController extends BaseController
    */
   private function findModel($model_name, $id = null)
   {
-      $model = config('kregel.warden.models.'.$model_name);
+      $model = config('kregel.warden.models.'.$model_name.'.model');
       if (empty($model)) {
           throw new \Exception('There is no model by the name {'. $model_name.'}');
       }

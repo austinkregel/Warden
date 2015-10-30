@@ -42,21 +42,20 @@
             <tbody>
               @foreach($models as $model) 
                <tr>
-    						@foreach($field_names as $field) 
-    						  @if(stripos($field, 'password') === false)
-    						  <td>
-    						    @if(empty($model->$field))
-    						     <i>No data here</i>
-    						    @else
-    						      {{$model->$field}}
-    						    @endif
+                @foreach($field_names as $field)
+                  @if(stripos($field, 'password') === false)
+                  <td>
+                    @if(empty($model->$field))
+                     <i>No data here</i>
+                    @else
+                      {{$model->$field}}
+                    @endif
                   </td>
                   @endif
                 @endforeach
                 <td>
                   <span style="font-size:24px;">
                     <a href="{{url('/warden/'.$model_name.'/manage/'.$model->id)}}">
-                   
                       <i class="@if(config('kregel.warden.using.fontawesome') === true) fa fa-edit @else glyphicon glyphicon-edit @endif"></i>
                     </a>
                   </span>
@@ -74,6 +73,9 @@
               
             </tbody>
           </table>
+          <div class="text-center">
+            {!! $models->render() !!}
+          </div>
         </div>
       </div>
     </div>
