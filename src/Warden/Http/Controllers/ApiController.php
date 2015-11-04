@@ -68,7 +68,6 @@ class ApiController extends Controller
     {
         $model = config('kregel.warden.models.' . $model_name . '.model');
         if (empty($id) | !is_numeric($id)) {
-            dd($model, $model_name);
             return new $model;
         }
         return $model::find($id);
@@ -142,6 +141,13 @@ class ApiController extends Controller
         return response()->json(['message' => 'Successfully updated resource', 'code' => $status], $status);
     }
 
+    /**
+     * @param $model_name
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
     public function deleteModel($model_name, $id, Request $request){
         $this->checkParams(func_get_args());
 

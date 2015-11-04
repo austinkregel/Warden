@@ -4,7 +4,10 @@
  *
  */
 Route::group(['prefix' => config('kregel.warden.route'), 'as' => 'warden::'], function () {
-    get('test/{route}', 'ModelController@parseRoute');
+    Route::get('/', function(){
+        return view('warden::base');
+    });
+
     Route::get('{model}/manage/new', ['as' => 'new-model', 'uses' => 'ModelController@getNewModel']);
     Route::get('{model}s/manage', ['as' => 'models', 'uses' => 'ModelController@getModelList']);
     Route::get('{model}/manage/{id}', ['as' => 'model', 'uses' => 'ModelController@getModel']);
@@ -24,7 +27,6 @@ Route::group(['prefix' => config('kregel.warden.route'), 'as' => 'warden::'], fu
         Route::put('{model}/{id}', ['as' => 'update-model', 'uses' => 'ApiController@putModel']);
         // Should delete a model.
         Route::delete('{model}/{id}', ['as' => 'delete-model', 'uses' => 'ApiController@deleteModel']);
-
     });
 });
 
