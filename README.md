@@ -27,8 +27,12 @@ All you need is to do the following, then add your models to the `config/warden.
 
       ```php
       'models' => [
-        'user' => \App\User::class,
-        'shortname' => \Your\Model::class,
+        'user' => [
+           'model' => App\User::class,
+           'relations' => [
+              'teams' // This is set up for spark, so in this case use teams.
+           ]
+        ],
         ...,
       ],
       ```
