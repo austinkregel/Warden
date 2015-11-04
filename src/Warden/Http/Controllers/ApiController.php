@@ -1,101 +1,186 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: austin
- * Date: 10/29/15
- * Time: 1:55 PM
- */
 
 namespace Kregel\Warden\Http\Controllers;
-
 
 use Illuminate\Http\Request;
 
 class ApiController extends Controller
 {
-//'warden::api.get-models'
-/*
- * Try to make warden api first for useability.
- */
+
     /**
      * @param $model_name
-     * @param Request $response
-     * @throws \Exception
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function g($model_name, Request $response){
+    public function g($model_name, Request $request)
+    {
         $this->checkParams(func_get_args()); // Filler bullshit.
+        $code = $request->ajax() ? 202 : 200;
+        $returnable = ['message' => 'Method success, but nothing was done.', 'code' => $code];
+        return response()->json($returnable, $code);
+    }
+
+    /**
+     * @param $model_name
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAllModels($model_name, Request $request)
+    {
+        return $this->getSomeModels($model_name, $request, 50000);
     }
 
     /**
      * @param $model_name
      * @param Request $request
      * @param int $paginate
+     *
      * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
      */
-    public function getSomeModels($model_name, Request $request, $paginate = 100){
+    public function getSomeModels($model_name, Request $request, $paginate = 100)
+    {
         $this->checkParams(func_get_args());
         $model = $this->findModel($model_name);
         $field_names = $this->getFields($model);
         $all = $model::paginate($paginate);
         $i = 0;
-        foreach($all as $model){
-            foreach($field_names as $f)
-                if(!in_array($f, $model->getHidden()))
-                    $returnable[$i][$f] = $model->$f;
+        foreach ($all as $model) {
+            foreach ($field_names as $f) {
+                if (!in_array($f, $model->getHidden())) {
+                    $returnable[$model_name . 's'][$i] = $model->toArray();
+                }
+            }
             $i++;
         }
-        if($request->ajax())
-            return response()->json($returnable, 202);
-        return response()->json($returnable, 200);
-    }
-
-    /**
-     * @param $model_name
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getAllModels($model_name, Request $request){
-        return $this->getSomeModels($model_name, $request, 50000);
+        if (empty($returnable)) $returnable = [];
+        $status = $request->ajax() ? 202 : 200;
+        return response()->json($returnable, $status);
     }
 
     /**
      * @param $model_name
      * @param null $id
+     *
      * @return mixed
      */
-    private function findModel($model_name, $id = null)
+    public function findModel($model_name, $id = null)
     {
-        $model = config('kregel.warden.models.'.$model_name.'.model');
-        if (empty($id) | !is_numeric($id))
+        $model = config('kregel.warden.models.' . $model_name . '.model');
+        if (empty($id) | !is_numeric($id)) {
+            dd($model, $model_name);
             return new $model;
+        }
         return $model::find($id);
-    }
-
-    public function postModel($model_name, Request $request)
-    {
-        $this->checkParams(func_get_args());
-        $model = $this->findModel($model_name);
-        // Need a way to validate the input for the model. If we then can not find any
-        // way to validate the inputs then we might have some un-wanted inputs from
-        // some of the users. We probably won't need to worry about validations.
-        $model->fill($request->all());
-        $saved = $model->save();
-        if(!$saved)
-            return response()->json(['message'=>'Failed to created resource', 'code' => 422], 422);
-        $status = $request->ajax()?202:200;
-        return response()->json(['message'=>'Successfully created resource', 'code' => $request->ajax()?202:200], $status);
     }
 
     /**
      * @param $model
+     *
      * @return array
      */
-    private function getFields($model){
+    private function getFields($model)
+    {
         $field_names = !empty($model->getVisible()) ? $model->getVisible() : $model->getFillable();
-        $dates = !empty($model->getDates())? $model->getDates() : [];
-
+        $dates = !empty($model->getDates()) ? $model->getDates() : [];
         return array_merge($field_names, $dates);
     }
 
+    /**
+     * @param $model_name
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function postModel($model_name, Request $request)
+    {
+        $this->checkParams(func_get_args());
+        $model = $this->findModel($model_name);
+        if (empty($model))
+            return response()->json(['message' => 'No resource found!', 'code' => 404], 404);
+        // Need a way to validate the input for the model. If we then can not find any
+        // way to validate the inputs then we might have some un-wanted inputs from
+        // some of the users. We probably won't need to worry about validations.
+        $model->fill($request->all());
+        if (!empty($model->password)) {
+            $model->password = bcrypt($model->password);
+        }
+
+        $saved = $model->save();
+        if (!$saved) {
+            return response()->json(['message' => 'Failed to created resource', 'code' => 422], 422);
+        }
+        $status = $request->ajax() ? 202 : 200;
+        return response()->json(['message' => 'Successfully created resource', 'code' => $status], $status);
+    }
+
+    /**
+     * @param $model_name
+     * @param $id
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function putModel($model_name, $id, Request $request)
+    {
+        $this->checkParams(func_get_args());
+
+        $model = $this->findModel($model_name, $id);
+        if (empty($model))
+            return response()->json(['message' => 'No resource found!', 'code' => 404], 404);
+        $input = $request->all();
+        $this->validatePut($input, $model);
+        if (empty($input))
+            return response()->json(['message' => 'Nothing to update for resource', 'code' => 205], 202);
+        $model->fill($input);
+
+        $saved = $model->save();
+        if (!$saved) {
+            return response()->json(['message' => 'Failed to updated resource', 'code' => 422], 422);
+        }
+        $status = $request->ajax() ? 202 : 200;
+        return response()->json(['message' => 'Successfully updated resource', 'code' => $status], $status);
+    }
+
+    public function deleteModel($model_name, $id, Request $request){
+        $this->checkParams(func_get_args());
+
+        $model = $this->findModel($model_name, $id);
+        if (empty($model))
+            return response()->json(['message' => 'No resource found!', 'code' => 404], 404);
+        $model->delete();
+        $status = $request->ajax() ? 202 : 200;
+        return response()->json(['message' => 'Successfully deleted resource', 'code' => $status], $status);
+    }
+    /**
+     * This Checks for any values and the _token for csrf and removes it from any
+     * blank values and it also removes the _token from the input. If there is
+     * a password within the request it will compare it to the current hash.
+     * @param $input
+     * @param $model
+     */
+    public function validatePut(&$input, $model)
+    {
+        foreach ($input as $k => $v) {
+            if (empty($v) || $k == '_token')
+                unset($input[$k]);
+            if (!empty($model->$k)) {
+                if ($model->$k === $v)
+                    unset($input[$k]);
+            }
+            if (((stripos($k, 'password') !== false) || (stripos($k, 'passwd') !== false)) && !empty($model->$k)) {
+                if (\Hash::check($v, $model->$k))
+                    unset($input[$k]);
+                else $input[$k] = bcrypt($v);
+            }
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function generateUUID()
+    {
+        return uuid(openssl_random_pseudo_bytes(16));
+    }
 }

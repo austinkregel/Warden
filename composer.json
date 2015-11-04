@@ -10,7 +10,7 @@
     "require": {
         "php": ">=5.4.0",
         "illuminate/support": "5.1.*",
-        "kregel/formmodel":"dev-master"
+        "kregel/formmodel":"dev-vue-base"
     },
     "autoload": {
         "psr-4": {

@@ -8,7 +8,6 @@
  * custom middleware and to not use this middleware for
  * customization!
  */
-
 namespace Kregel\Warden\Http\Middleware;
 
 use Closure;
@@ -27,8 +26,7 @@ class Authentication
     /**
      * Create a new filter instance.
      *
-     * @param  Guard  $auth
-     * @return void
+     * @param Guard $auth
      */
     public function __construct(Guard $auth)
     {
@@ -38,8 +36,9 @@ class Authentication
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
