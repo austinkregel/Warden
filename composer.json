@@ -1,7 +1,7 @@
 {
     "name": "kregel/warden",
     "description": "Manage all your Laravel models with ease! (Comes with a built in RESTful api)",
-    "tags": ["crud", "model-management", " html", "laravel"],
+    "keywords": ["crud", "model-management", " html", "laravel"],
     "authors": [
         {
             "name": "Austin Kregel",
