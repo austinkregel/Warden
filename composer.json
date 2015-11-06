@@ -1,6 +1,8 @@
 {
     "name": "kregel/warden",
     "description": "",
+    "keywords": ["crud", "model-management", " html", "laravel", "vue-js", "vuejs"],
+
     "authors": [
         {
             "name": "Austin Kregel",
