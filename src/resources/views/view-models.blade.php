@@ -21,7 +21,6 @@
         outline: none;
     }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.4/vue.js"></script>
 <div id="vue-form-wrapper">
     <div class="container">
         <div class="row">
@@ -60,7 +59,7 @@
                                     @endforeach
                                     <td>
                                       <span style="font-size:24px;">
-                                        <a href="{{url('/warden/'.$model_name.'/manage/'.$model->id)}}">
+                                        <a href="{{url(config('kregel.warden.route').'/'.$model_name.'/manage/'.$model->id)}}">
                                             <i class="@if(config('kregel.warden.using.fontawesome') === true) fa fa-edit @else glyphicon glyphicon-edit @endif"></i>
                                         </a>
                                       </span>
@@ -92,7 +91,14 @@
     </div>
 </div>
 <script>
-
+    if(typeof Vue == 'undefined'){
+        var vuescript = document.createElement('script');
+        vuescript.src = 'https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.4/vue.@if(!config('app.debug'))min.@endif()js';
+        document.getElementsByTagName("head")[0].appendChild(vuescript);
+    }
+</script>
+<script>
+    setTimeout(function(){
     var vm = new Vue({
         el: "#vue-form-wrapper",
         data: {
@@ -103,7 +109,23 @@
         methods: {
             makeRequest: function (e) {
                 this._token = $(e.target).find('input[name="_token"]').val();
-                request(e.target.action, {_token:'{{ csrf_token() }}', _method: 'DELETE'});
+                request(e.target.action, {_token:'{{ csrf_token() }}', _method: 'DELETE'}, function(responseArea){
+                    if(responseArea.classList.contains('alert')){
+                        responseArea.className += 'alert-success ';
+                        responseArea.className = responseArea.className.replace(/\balert-.*\s/g, ' alert-success');
+                        $(form).parent().parent().parent().remove();
+                    }
+                }, function(responseArea){
+                    if(responseArea.classList.contains('alert')){
+                        responseArea.className += 'alert-warning ';
+                        responseArea.className = responseArea.className.replace(/\balert-.*\s/g, ' alert-warning');
+                    }
+                }, function(responseArea){
+                    if(responseArea.classList.contains('alert')){
+                        responseArea.className += 'alert-danger ';
+                        responseArea.className = responseArea.className.replace(/\balert-.*\s/g, ' alert-danger');
+                    }
+                });
                 form = e.target;
             },
             close: function(e){
@@ -112,45 +134,7 @@
         }
     }),
         form;
-    function request(url, data){
-        var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
-        xmlhttp.open("POST", url);
-
-        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        xmlhttp.setRequestHeader("X-Requested-With", 'XMLHttpRequest');
-        xmlhttp.onreadystatechange =  function () {
-            if (xmlhttp.readyState == 4) {
-                var response = JSON.parse(xmlhttp.responseText);
-                vm.$data.response = response.message;
-                var respArea = document.getElementById('response');
-                if(!respArea.classList.contains('alert)')){
-                    respArea.className = 'alert ';
-                }
-                switch(response.code){
-                    case 200:
-                    case 202:
-                        if(respArea.classList.contains('alert')){
-                            respArea.className += 'alert-success ';
-                            respArea.className = respArea.className.replace(/\balert-.*\s/g, ' alert-success');
-                            $(form).parent().parent().parent().remove();
-                        }
-                        break;
-                    case 205:
-                        if(respArea.classList.contains('alert')){
-                            respArea.className += 'alert-warning ';
-                            respArea.className = respArea.className.replace(/\balert-.*\s/g, ' alert-warning');
-                        }
-                        break;
-                    default:
-                        if(respArea.classList.contains('alert')){
-                            respArea.className += 'alert-danger ';
-                            respArea.className = respArea.className.replace(/\balert-.*\s/g, ' alert-danger');
-                        }
-                }
-            }
-        };
-        xmlhttp.send(JSON.stringify(data));
-        console.log(data);
-    }
+    }, 10);
 </script>
+    @include('formmodel::request', ['type' => 'DELETE'])
 @stop

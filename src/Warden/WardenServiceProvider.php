@@ -34,10 +34,10 @@ class WardenServiceProvider extends ServiceProvider
             $this->defineRoutes();
         });
 
-        $this->loadViewsFrom(__DIR__.'/resources/views', 'warden');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'warden');
         $this->publishes([
-            __DIR__.'/resources/views' => base_path('resources/views/vendor/warden'),
-            __DIR__.'/config/config.php' => config_path('kregel/warden.php'),
+            __DIR__.'/../resources/views' => base_path('resources/views/vendor/warden'),
+            __DIR__.'/../config/config.php' => config_path('kregel/warden.php'),
         ]);
         // Define our custom authentication to make sure
         // that the user is logged in!
