@@ -1,3 +1,4 @@
+[![downloads](https://img.shields.io/packagist/dt/kregel/warden.svg)](https://packagist.org/packages/kregel/warden)
 
 # What is this package?
 This package was created to help decrease the time it takes to build a project
