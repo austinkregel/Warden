@@ -84,20 +84,17 @@ class ModelController extends Controller
        * that model from within the database.
        */
         $model = $this->findModel($model_name, $id)->getOriginalContent();
-
-        /*
-         * Here we need to make sure that we have all of the fields that we want to
-         * have shown, if the visible field is not currently set we should grab
-         * the fillable fields so we can populate the table on the view.
-         */
-        $field_names = !empty($model->getVisible()) ?
-            $model->getVisible() :
-            $model->getFillable();
         /*
          * Here we generate the form to update the model using the kregel/formmodel
          * package
          */
-        $form_info = $form->modelForm($model, $field_names, route('warden::api.update-model', [$model_name, $model->id]), [/*This is for relations, TODO...*/], 'PUT');
+        $form->using(config('kregel.formmodel.using.framework'))
+                ->withModel($model)
+                ->submitTo(route('warden::api.update-model'))
+                ->form([
+                    'method' => 'post',
+                    'enctype' =>'multipart/form-data'
+                ]);
 
         return view('warden::view-model')
             ->with('form', $form_info)
@@ -119,19 +116,16 @@ class ModelController extends Controller
         $model = $this->findModel($model_name);
 
         /*
-         * Here we need to make sure that we have all of the fields that we want to
-         * have shown, if the visible field is not currently set we should grab
-         * the fillable fields so we can populate the table on the view.
-         */
-        $field_names = !empty($model->getVisible()) ?
-            $model->getVisible() :
-            $model->getFillable();
-        /*
          * Here we generate the form to update the model using the kregel/formmodel
          * package
          */
-        $form_info = $form->modelForm($model, $field_names, route('warden::api.create-model', [$model_name]), [/*This is for relations, TODO...*/], 'POST');
-
+        $form_info = $form->using(config('kregel.formmodel.using.framework'))
+                ->withModel($model)
+                ->submitTo(route('warden::api.create-model'))
+                ->form([
+                    'method' => 'post',
+                    'enctype' =>'multipart/form-data'
+                ]);
         return view('warden::view-model')
             ->with('form', $form_info)
             ->with('model_name', $model_name);
