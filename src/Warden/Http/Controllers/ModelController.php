@@ -88,7 +88,7 @@ class ModelController extends Controller
          * Here we generate the form to update the model using the kregel/formmodel
          * package
          */
-        $form->using(config('kregel.formmodel.using.framework'))
+        $form_info = $form->using(config('kregel.formmodel.using.framework'))
                 ->withModel($model)
                 ->submitTo(route('warden::api.update-model'))
                 ->form([
