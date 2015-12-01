@@ -46,9 +46,9 @@ class ModelController extends Controller
         // Inject a quick form for deleting the objects.
 
         return view('warden::view-models')
-                ->with('field_names', ($field_names))
-                ->with('models', $desired_objects)
-                ->with('model_name', $model_name);
+            ->with('field_names', ($field_names))
+            ->with('models', $desired_objects)
+            ->with('model_name', $model_name);
     }
 
     /**
@@ -97,7 +97,13 @@ class ModelController extends Controller
          * Here we generate the form to update the model using the kregel/formmodel
          * package
          */
-        $form_info = $form->modelForm($model, $field_names, route('warden::api.update-model', [$model_name, $model->id]), [/*This is for relations, TODO...*/], 'PUT');
+//        $form_info = $form->modelForm($model, $field_names, route('warden::api.update-model', [$model_name, $model->id]), [/*This is for relations, TODO...*/], 'PUT');
+        $form_info = $form->using(config('kregel.formmodel.using.framework'))
+                            ->withModel($model)
+                            ->submitTo(route('warden::api.create-model'))
+                            ->form([
+                                'method' => 'post'
+                            ]);
 
         return view('warden::view-model')
             ->with('form', $form_info)
@@ -119,22 +125,21 @@ class ModelController extends Controller
         $model = $this->findModel($model_name);
 
         /*
-         * Here we need to make sure that we have all of the fields that we want to
-         * have shown, if the visible field is not currently set we should grab
-         * the fillable fields so we can populate the table on the view.
-         */
-        $field_names = !empty($model->getVisible()) ?
-            $model->getVisible() :
-            $model->getFillable();
-        /*
          * Here we generate the form to update the model using the kregel/formmodel
          * package
          */
-        $form_info = $form->modelForm($model, $field_names, route('warden::api.create-model', [$model_name]), [/*This is for relations, TODO...*/], 'POST');
+//        $form_info = $form->modelForm($model, $field_names, route('warden::api.create-model', [$model_name]),[/*This is for relations, TODO...*/], 'POST');
+        $form_info = $form->using(config('kregel.formmodel.using.framework'))
+            ->withModel($model)
+            ->submitTo(route('warden::api.create-model'))
+            ->form([
+                'method' => 'post',
+                'enctype' =>'multipart/form-data'
+            ]);
 
         return view('warden::view-model')
-            ->with('form', $form_info)
-            ->with('model_name', $model_name);
+                ->with('form', $form_info)
+                ->with('model_name', $model_name);
     }
 
     /**
@@ -155,6 +160,18 @@ class ModelController extends Controller
         Session::flash('message', 'Hooray! It worked! The model was deleted!');
 
         return redirect(route('warden::models', $model_name));
+    }
+
+    /**
+     * @param  String $model_name A key in the warden.models configuration
+     *
+     * @return Route
+     */
+    protected function createModel($model_name)
+    {
+        $this->post('warden::api.create-model', [$model_name]);
+
+        return redirect(route('warden::model', [$model_name, $model->id]));
     }
 
     /**
@@ -220,18 +237,6 @@ class ModelController extends Controller
                 // Remove any extra starting or trailing spaces.
                 return trim($input);
         }
-    }
-
-    /**
-     * @param  String $model_name A key in the warden.models configuration
-     *
-     * @return Route
-     */
-    protected function createModel($model_name)
-    {
-        $this->post('warden::api.create-model', [$model_name]);
-
-        return redirect(route('warden::model', [$model_name, $model->id]));
     }
 
 
