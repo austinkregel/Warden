@@ -90,7 +90,7 @@ class ModelController extends Controller
          */
         $form_info = $form->using(config('kregel.formmodel.using.framework'))
                             ->withModel($model)
-                            ->submitTo(route('warden::api.create-model'))
+                            ->submitTo(route('warden::api.update-model', $model_name))
                             ->form([
                                 'method' => 'put',
 		                'enctype' => 'multipart/form-data',
@@ -120,7 +120,7 @@ class ModelController extends Controller
          */
         $form_info = $form->using(config('kregel.formmodel.using.framework'))
             ->withModel($model)
-            ->submitTo(route('warden::api.create-model'))
+            ->submitTo(route('warden::api.create-model', $model_name))
             ->form([
                 'method' => 'post',
                 'enctype' =>'multipart/form-data'
