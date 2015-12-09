@@ -92,7 +92,8 @@ class ModelController extends Controller
                             ->withModel($model)
                             ->submitTo(route('warden::api.create-model'))
                             ->form([
-                                'method' => 'post'
+                                'method' => 'put',
+		                'enctype' => 'multipart/form-data',
                             ]);
         return view('warden::view-model')
             ->with('form', $form_info)
