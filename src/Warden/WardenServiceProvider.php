@@ -25,14 +25,16 @@ class WardenServiceProvider extends ServiceProvider
         $loader->alias('FormModel', Kregel\FormModel\FormModel::class);
     }
 
-    /**
-    * Bootstrap any application services.
-    */
-    public function boot()
-    {
-        $this->app->booted(function () {
-            $this->defineRoutes();
-        });
+  /**
+   * Bootstrap any application services.
+   *
+   * @return void
+   */
+  public function boot()
+  {
+      $this->app->booted(function () {
+          $this->defineRoutes();
+      });
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'warden');
         $this->publishes([

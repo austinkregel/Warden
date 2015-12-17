@@ -3,7 +3,7 @@
 /**
  *
  */
-Route::group(['prefix' => config('kregel.warden.route'), 'as' => 'warden::'], function () {
+Route::group(['prefix' => config('kregel.warden.route'), 'as' => 'warden::', 'middleware' => 'auth'], function () {
     Route::get('/', function(){
         return view('warden::base');
     });
@@ -23,8 +23,11 @@ Route::group(['prefix' => config('kregel.warden.route'), 'as' => 'warden::'], fu
 
         // Should create a modelhttp://hidden.dev/warden/api/v1.0/user/
         Route::post('{model}', ['as' => 'create-model', 'uses' => 'ApiController@postModel']);
+        
         // Should update a model.
-        Route::put('{model}/{id}', ['as' => 'update-model', 'uses' => 'ApiController@putModel']);
+        Route::post('{model}/{id}', ['as' => 'update-model', 'uses' => 'ApiController@putModel']);
+        Route::put ('{model}/{id}', ['as' => 'update-model', 'uses' => 'ApiController@putModel']);
+        
         // Should delete a model.
         Route::delete('{model}/{id}', ['as' => 'delete-model', 'uses' => 'ApiController@deleteModel']);
     });

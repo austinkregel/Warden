@@ -1,6 +1,8 @@
+[![downloads](https://img.shields.io/packagist/dt/kregel/warden.svg)](https://packagist.org/packages/kregel/warden)
 
 # What is this package?
-This package is a branch
+This package was created to help decrease the time it takes to build a project
+which needs to create, delete, and edit the project's [Laravel Model](http://laravel.com/docs/master/eloquent)s.
 
 # Warden?
 The project is named Warden because much like a prison warden, it can bring in an inmate (create a new item), take out an inmate (delete an item), or make changes to what the inmate can do (edit an item). By no means is it limited to just a User's model. It (so far) can work an any model.
@@ -24,7 +26,6 @@ All you need is to do the following, then add your models to the `config/warden.
   3.  Publish the config file! This should be able to be done with `php artisan vendor:publish` once published, add in your
       models to the `config/warden.php` file and tweak it they way you need it..
 
-
 ```php
 'models' => [
     'user' => [
@@ -36,7 +37,6 @@ All you need is to do the following, then add your models to the `config/warden.
     ...,
 ],
 ```
-
   4.  Once you have everything installed and configured, you actually can navigate to your website by going to http://(yourwebsite.com)/warden/(yourmodel)s/manage
       So that means that if I had this installed on my website and set up with my users model I would go to http://austinkregel.com/warden/users/manage
 

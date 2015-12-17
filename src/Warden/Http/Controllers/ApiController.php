@@ -125,12 +125,23 @@ class ApiController extends Controller
         $this->checkParams(func_get_args());
 
         $model = $this->findModel($model_name, $id);
-        if (empty($model))
+        if (empty($model) || empty($request->ajax()))
             return response()->json(['message' => 'No resource found!', 'code' => 404], 404);
         $input = $request->all();
+
         $this->validatePut($input, $model);
         if (empty($input))
             return response()->json(['message' => 'Nothing to update for resource', 'code' => 205], 202);
+
+        if ($request->hasFile('path') && $request->file('path')->isValid()) {
+            $file = $request->file('path');
+            $path = base_path() . '/storage/pdfs/' ;
+            $name = sha1_file($file->getClientOriginalName() . time(true)).'.'.$file->getClientOriginalExtension();
+            if($file->move($path))
+                $input['path'] = $path . $name;
+            else
+                return response()->json(['message'=>$file->getErrorMessage(), 'code' => 422], 422);
+        }
         $model->fill($input);
 
         $saved = $model->save();

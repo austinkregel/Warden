@@ -2,7 +2,6 @@
     "name": "kregel/warden",
     "description": "Manage all your Laravel models with ease! (Comes with a built in RESTful api, and VueJS for model management)",
     "keywords": ["crud", "model-management", " html", "laravel", "vue-js", "vuejs"],
-
     "authors": [
         {
             "name": "Austin Kregel",
