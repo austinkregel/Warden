@@ -1,6 +1,7 @@
 {
     "name": "kregel/warden",
-    "description": "",
+    "description": "Manage all your Laravel models with ease! (Comes with a built in RESTful api)",
+    "keywords": ["crud", "model-management", " html", "laravel"],
     "authors": [
         {
             "name": "Austin Kregel",
@@ -10,7 +11,7 @@
     "require": {
         "php": ">=5.4.0",
         "illuminate/support": "5.1.*",
-        "kregel/formmodel":"dev-vue-base"
+        "kregel/formmodel":"^2.0"
     },
     "autoload": {
         "psr-4": {
