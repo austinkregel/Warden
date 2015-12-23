@@ -27,8 +27,6 @@ class WardenServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
     public function boot()
     {
@@ -50,8 +48,8 @@ class WardenServiceProvider extends ServiceProvider
     }
 
     /**
-    * Define the UserManagement routes.
-    */
+     * Define the UserManagement routes.
+     */
     protected function defineRoutes()
     {
         if (!$this->app->routesAreCached()) {

@@ -19,7 +19,7 @@ class ModelController extends Controller
     }
 
     /**
-     * @param    String $model_name A key in the warden.models configuration
+     * @param String $model_name A key in the warden.models configuration
      *
      * @return view
      */
@@ -52,28 +52,30 @@ class ModelController extends Controller
     }
 
     /**
-     * @param  String $model_name Must be a valid class
-     * @param  int $id ID of the desired class
+     * @param String $model_name Must be a valid class
+     * @param int    $id         ID of the desired class
+     *
      * @throws \Exception
+     *
      * @return Model A model defined by ID
      */
     private function findModel($model_name, $id = null)
     {
-        $model = config('kregel.warden.models.' . $model_name . '.model');
+        $model = config('kregel.warden.models.'.$model_name.'.model');
         if (empty($model)) {
-            throw new \Exception('There is no model by the name {' . $model_name . '}');
+            throw new \Exception('There is no model by the name {'.$model_name.'}');
         }
         if (empty($id) | !is_numeric($id)) {
             return new $model();
         }
-        return $this->get('warden::api.get-model', [$model_name, $id]);
 
+        return $this->get('warden::api.get-model', [$model_name, $id]);
     }
 
     /**
-     * @param    String $model_name A key in the warden.models configuration
-     * @param    int $id The id of the model
-     * @param    FormModel $form An injected model
+     * @param String    $model_name A key in the warden.models configuration
+     * @param int       $id         The id of the model
+     * @param FormModel $form       An injected model
      *
      * @return mixed
      */
@@ -93,16 +95,17 @@ class ModelController extends Controller
                             ->submitTo(route('warden::api.update-model', [$model_name, $model->id]))
                             ->form([
                                 'method' => 'put',
-        		                'enctype' => 'multipart/form-data',
+                                'enctype' => 'multipart/form-data',
                             ]);
+
         return view('warden::view-model')
                 ->with('form', $form_info)
                 ->with('model_name', $model_name);
     }
 
     /**
-     * @param    String $model_name A key in the warden.models configuration
-     * @param    FormModel $form An injected model
+     * @param String    $model_name A key in the warden.models configuration
+     * @param FormModel $form       An injected model
      *
      * @return mixed
      */
@@ -123,8 +126,9 @@ class ModelController extends Controller
             ->submitTo(route('warden::api.create-model', $model_name))
             ->form([
                 'method' => 'post',
-                'enctype' =>'multipart/form-data'
+                'enctype' => 'multipart/form-data',
             ]);
+
         return view('warden::view-model')
                 ->with('form', $form_info)
                 ->with('model_name', $model_name);
@@ -133,8 +137,8 @@ class ModelController extends Controller
     /**
      * @depreciated Please use ajax to delete the element.
      *
-     * @param    String $model_name A key in the warden.models configuration
-     * @param    int $id The id of the model
+     * @param String $model_name A key in the warden.models configuration
+     * @param int    $id         The id of the model
      *
      * @return Route
      */
@@ -151,7 +155,7 @@ class ModelController extends Controller
     }
 
     /**
-     * @param  String $model_name A key in the warden.models configuration
+     * @param String $model_name A key in the warden.models configuration
      *
      * @return Route
      */
@@ -210,6 +214,7 @@ class ModelController extends Controller
     /**
      * @param $input_type
      * @param $input
+     *
      * @return string
      */
     private function manageInput($input_type, $input)
@@ -226,6 +231,4 @@ class ModelController extends Controller
                 return trim($input);
         }
     }
-
-
 }
