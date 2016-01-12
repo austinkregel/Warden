@@ -5,7 +5,6 @@
 @stop
 
 @section('content')
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.4/vue.js"></script>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-4">

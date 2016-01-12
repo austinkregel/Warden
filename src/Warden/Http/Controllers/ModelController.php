@@ -90,17 +90,18 @@ class ModelController extends Controller
          * Here we generate the form to update the model using the kregel/formmodel
          * package
          */
-        $form_info = $form->using(config('kregel.formmodel.using.framework'))
+        $form = $form->using(config('kregel.formmodel.using.framework'))
                             ->withModel($model)
-                            ->submitTo(route('warden::api.update-model', [$model_name, $model->id]))
-                            ->form([
-                                'method' => 'put',
-                                'enctype' => 'multipart/form-data',
-                            ]);
-
+                            ->submitTo(route('warden::api.update-model', [$model_name, $model->id]));
+        $form_info = $form->form([
+            'method' => 'put',
+            'enctype' => 'multipart/form-data',
+        ]);
         return view('warden::view-model')
                 ->with('form', $form_info)
-                ->with('model_name', $model_name);
+                ->with('model_name', $model_name)
+                ->with('vue_components', $form->vue_components)
+                ->with('method', $form->options['method']);
     }
 
     /**

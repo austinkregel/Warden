@@ -39,7 +39,8 @@ trait Wardenable
         $returnable = [];
         foreach ($attr as $old => $new) {
             if (stripos($old, '_id') !== false) {
-                $returnable[$new] = $this->$new;
+                if(!empty($this->$new))
+                    $returnable[$new] = $this->$new;
             } elseif (stripos($old, '_to') !== false) {
                 $a = json_decode($this->$old, true);
                 $keys = array_keys($a);
@@ -50,7 +51,8 @@ trait Wardenable
                     }
                 }
             } else {
-                $returnable[$new] = $this->$old;
+                if(!empty($this->$old))
+                    $returnable[$new] = $this->$old;
             }
         }
 
