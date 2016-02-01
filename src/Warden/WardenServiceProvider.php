@@ -42,8 +42,8 @@ class WardenServiceProvider extends ServiceProvider
             __DIR__.'/../config/config.php' => config_path('kregel/warden.php'),
         ], 'config');
 
-        // Define our custom authentication to make sure
-        // that the user is logged in!
+        // Define our custom authentication to make
+        // sure that the user is logged in!
         $this->app['router']->middleware('custom-auth', config('kregel.warden.auth.middleware'));
     }
 

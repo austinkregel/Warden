@@ -120,6 +120,7 @@ class ApiController extends Controller
 		if ( ! empty( $model->password )) {
 			$model->password = bcrypt($model->password);
 		}
+
 		$saved = $model->save();
 		if ( ! $saved) {
 			return response()->json([ 'message' => 'Failed to created resource', 'code' => 422 ], 422);
@@ -186,13 +187,21 @@ class ApiController extends Controller
 	public function deleteModel($model_name, $id, Request $request)
 	{
 		$this->checkParams(func_get_args());
+		$status = $request->ajax() ? 202 : 200;
 
 		$model = $this->findModel($model_name, $id);
-		if (empty( $model )) {
+		if (empty( $model->id )) {
+			if($model = $model::withTrashed()->whereId($id)->first())
+			{
+				$relations = config('kregel.warden.models.' . $model_name . '.relations');
+				foreach($relations as $rel)
+				 	$model->$rel()->forceDelete();
+				$model->forceDelete();
+				return response()->json(['message' => 'Resource deleted from the system.', 'code' => $status], $status);
+			}
 			return response()->json([ 'message' => 'No resource found!', 'code' => 404 ], 404);
 		}
 		$model->delete();
-		$status = $request->ajax() ? 202 : 200;
 
 		return response()->json([ 'message' => 'Successfully deleted resource', 'code' => $status ], $status);
 	}
