@@ -2,12 +2,12 @@
 
 return [
   'route' => 'warden',
-  'auth' => [
+  'auth'  => [
     /*
      * Set this to your own custom middleware, just please know that it 
      * should ensure that the user is logged in.
      */
-    'middleware' => Kregel\Warden\Http\Middleware\Authentication::class,
+    'middleware'      => Kregel\Warden\Http\Middleware\Authentication::class,
     'middleware_name' => 'custom-auth',
     /*
      * Name of a login route, it's recommended to have it named, but incase
@@ -26,7 +26,7 @@ return [
    */
   'using' => [
     'fontawesome' => true,
-    'csrf' => true,
+    'csrf'        => true,
   ],
   'views' => [
     'base-layout' => 'warden::layouts.base',

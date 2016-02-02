@@ -19,7 +19,7 @@ class ModelController extends Controller
     }
 
     /**
-     * @param String $model_name A key in the warden.models configuration
+     * @param string $model_name A key in the warden.models configuration
      *
      * @return view
      */
@@ -52,7 +52,7 @@ class ModelController extends Controller
     }
 
     /**
-     * @param String $model_name Must be a valid class
+     * @param string $model_name Must be a valid class
      * @param int    $id         ID of the desired class
      *
      * @throws \Exception
@@ -73,13 +73,13 @@ class ModelController extends Controller
     }
 
     /**
-     * @param String    $model_name A key in the warden.models configuration
+     * @param string    $model_name A key in the warden.models configuration
      * @param int       $id         The id of the model
      * @param FormModel $form       An injected model
      *
      * @return mixed
      */
-    protected function getModel($model_name, $id = null, FormModel $form)
+    protected function getModel($model_name, $id, FormModel $form)
     {
         /*
        * We need to grab the model from the config and select one entry for
@@ -94,9 +94,10 @@ class ModelController extends Controller
                             ->withModel($model)
                             ->submitTo(route('warden::api.update-model', [$model_name, $model->id]));
         $form_info = $form->form([
-            'method' => 'put',
+            'method'  => 'put',
             'enctype' => 'multipart/form-data',
         ]);
+
         return view('warden::view-model')
                 ->with('form', $form_info)
                 ->with('model_name', $model_name)
@@ -105,7 +106,7 @@ class ModelController extends Controller
     }
 
     /**
-     * @param String    $model_name A key in the warden.models configuration
+     * @param string    $model_name A key in the warden.models configuration
      * @param FormModel $form       An injected model
      *
      * @return mixed
@@ -126,7 +127,7 @@ class ModelController extends Controller
             ->withModel($model)
             ->submitTo(route('warden::api.create-model', $model_name))
             ->form([
-                'method' => 'post',
+                'method'  => 'post',
                 'enctype' => 'multipart/form-data',
             ]);
 
@@ -138,7 +139,7 @@ class ModelController extends Controller
     /**
      * @depreciated Please use ajax to delete the element.
      *
-     * @param String $model_name A key in the warden.models configuration
+     * @param string $model_name A key in the warden.models configuration
      * @param int    $id         The id of the model
      *
      * @return Route
@@ -156,7 +157,7 @@ class ModelController extends Controller
     }
 
     /**
-     * @param String $model_name A key in the warden.models configuration
+     * @param string $model_name A key in the warden.models configuration
      *
      * @return Route
      */

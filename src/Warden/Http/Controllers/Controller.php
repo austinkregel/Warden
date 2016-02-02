@@ -2,27 +2,28 @@
 
 namespace Kregel\Warden\Http\Controllers;
 
-use Route;
+use BadMethodCallException;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Routing\Controller as BaseController;
 use Input;
 use Request;
-use BadMethodCallException;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Route;
 
 abstract class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
     /**
      * Handle calls to missing methods on the controller.
      *
      * @param string $method
      * @param array  $parameters
      *
-     * @return mixed
-     *
      * @throws \BadMethodCallException
+     *
+     * @return mixed
      */
     public function __call($method, $parameters)
     {
@@ -34,7 +35,7 @@ abstract class Controller extends BaseController
      *
      * @throws \Exception
      */
-    public function checkParams(Array $params)
+    public function checkParams(array $params)
     {
         foreach ($params as $p) {
             $config = config('kregel.warden.models');
@@ -73,6 +74,7 @@ abstract class Controller extends BaseController
 
         return $response;
     }
+
     /**
      * @param $route
      *
@@ -86,6 +88,7 @@ abstract class Controller extends BaseController
 
         return $response;
     }
+
     /**
      * @param $route
      *
@@ -99,6 +102,7 @@ abstract class Controller extends BaseController
 
         return $response;
     }
+
     /**
      * @param $route
      * @param array $params
