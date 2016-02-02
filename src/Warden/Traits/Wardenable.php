@@ -21,7 +21,7 @@ trait Wardenable
      *
      * @return $this
      */
-    public function setWarden(Array $fields)
+    public function setWarden(array $fields)
     {
         $this->warden = $fields;
 
@@ -36,15 +36,15 @@ trait Wardenable
     public function toArray()
     {
         $attr = !empty($this->getWarden()) ? $this->getWarden() : null;
-        if(empty($attr))
-        {
+        if (empty($attr)) {
             $attr = empty($this->getVisible()) ? $this->getFillable() : $this->getVisible();
         }
         $returnable = [];
         foreach ($attr as $old => $new) {
             if (stripos($old, '_id') !== false) {
-                if(!empty($this->$new))
+                if (!empty($this->$new)) {
                     $returnable[$new] = $this->{trim($new, '_id')};
+                }
             } elseif (stripos($old, '_to') !== false) {
                 $a = json_decode($this->$old, true);
                 $keys = array_keys($a);
@@ -54,12 +54,13 @@ trait Wardenable
                         $returnable[$old][] = $model::find($value);
                     }
                 }
-
             } else {
-                if(!empty($this->$old))
+                if (!empty($this->$old)) {
                     $returnable[$new] = $this->$old;
+                }
             }
         }
+
         return $returnable;
     }
 
