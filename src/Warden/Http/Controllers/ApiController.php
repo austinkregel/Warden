@@ -121,17 +121,20 @@ class ApiController extends Controller
         // way to validate the inputs then we might have some un-wanted inputs from
         // some of the users. We probably won't need to worry about validations.
         $input = $this->clearInput(array_merge([
-                'uuid' => $this->generateUUID()
-            ], $request->all()));
+            'uuid' => $this->generateUUID()
+        ], $request->all()));
 
         $model->fill($input);
         if ( ! empty( $model->password )) {
             $model->password = bcrypt($model->password);
         }
-        $inputs = $model->getFillable();
-        foreach ($inputs as $i) {
-            if ($model->$i() instanceof Relation) {
-                $model->$i->sync($input[$i]);
+        $inputs    = $model->getFillable();
+        $relations = config('kregel.warden.models.' . $model_name . '.relations');
+        if ( ! empty( $relations )) {
+            foreach ($inputs as $i) {
+                if (in_array($i, $relations)) {
+                    $model->$i->sync($input[$i]);
+                }
             }
         }
         $saved = $model->save();
@@ -216,11 +219,13 @@ class ApiController extends Controller
             }
         }
         $model->fill($input);
+        $relations = config('kregel.warden.models.' . $model_name . '.relations');
+        if (!empty($relations)) {
+            foreach ($input as $k => $i) {
+                if (in_array($k, $relations)) {
 
-        foreach ($input as $k => $i) {
-            $relations = config('kregel.warden.models.' . $model_name . '.relations');
-            if (in_array($k, $relations)) {
-                $model->$k()->sync($i);
+                    $model->$k()->sync($i);
+                }
             }
         }
         $saved = $model->save();
@@ -252,8 +257,8 @@ class ApiController extends Controller
                     unset( $input[$k] );
                 }
             }
-            if($this->modelDoesRelate($model, $k, $v)){
-                unset($input[$k]);
+            if ($this->modelDoesRelate($model, $k, $v)) {
+                unset( $input[$k] );
             }
             if (( ( stripos($k, 'password') !== false ) || ( stripos($k, 'passwd') !== false ) ) && ! empty( $model->$k )) {
                 if (\Hash::check($v, $model->$k)) {
@@ -263,6 +268,25 @@ class ApiController extends Controller
                 }
             }
         }
+    }
+
+
+    private function modelDoesRelate(Model $model, $relation, $objects)
+    {
+        $relations = config('kregel.warden.models.' . $relation . '.relations');
+        if ($relations !== null && in_array($relation, $relations)) {
+            if (is_array($objects)) {
+                foreach ($objects as $k => $v) {
+                    if ($model->$relation->contains($v)) {
+                        return true;
+                    }
+                }
+            }
+
+            return (bool) $model->$relation->contains($objects);
+        }
+
+        return false;
     }
 
 
@@ -297,20 +321,5 @@ class ApiController extends Controller
         $model->delete();
 
         return response()->json([ 'message' => 'Successfully deleted resource', 'code' => $status ], $status);
-    }
-    private function modelDoesRelate(Model $model, $relation, $objects){
-        $relations  = config('kregel.warden.models.'.$relation.'.relations');
-        if($relations !== null && in_array($relation, $relations)) {
-            if (is_array($objects)) {
-                foreach ($objects as $k => $v) {
-                    if ($model->$relation->contains($v)) {
-                        return true;
-                    }
-                }
-            }
-
-            return (bool) $model->$relation->contains($objects);
-        }
-        return false;
     }
 }
