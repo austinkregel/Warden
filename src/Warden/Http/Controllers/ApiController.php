@@ -25,7 +25,6 @@ class ApiController extends Controller
         return response()->json($returnable, $code);
     }
 
-
     /**
      * @param         $model_name
      * @param Request $request
@@ -36,7 +35,6 @@ class ApiController extends Controller
     {
         return $this->getSomeModels($model_name, $request, 50000);
     }
-
 
     /**
      * @param         $model_name
@@ -68,7 +66,6 @@ class ApiController extends Controller
         return response()->json($returnable, $status);
     }
 
-
     /**
      * @param      $model_name
      * @param null $id
@@ -85,7 +82,6 @@ class ApiController extends Controller
         return $model::find($id);
     }
 
-
     /**
      * @param $model
      *
@@ -98,7 +94,6 @@ class ApiController extends Controller
 
         return array_merge($field_names, $dates);
     }
-
 
     /**
      * @param         $model_name
@@ -120,9 +115,9 @@ class ApiController extends Controller
         // Need a way to validate the input for the model. If we then can not find any
         // way to validate the inputs then we might have some un-wanted inputs from
         // some of the users. We probably won't need to worry about validations.
-        $input = $this->clearInput(array_merge([
+        $input = $this->clearInput([
             'uuid' => $this->generateUUID()
-        ], $request->all()));
+        ] + $request->all());
 
         $model->fill($input);
         if ( ! empty( $model->password )) {
@@ -148,12 +143,11 @@ class ApiController extends Controller
         if ($request->has('_redirect')) {
             // Remove the base part of the url, and just grab the tail end of the desired redirect, that way the
             // User can't be redirected away from your website.
-            return $this->returnRedirect('Successfully created resource');
+            return $this->returnRedirect('Successfully created resource', $request);
         }
 
         return redirect()->back()->with([ 'message' => 'Successfully created resource' ]);
     }
-
 
     public function clearInput($input)
     {
@@ -163,13 +157,10 @@ class ApiController extends Controller
                     unset( $input[$key] );
                 }
             }
-
             return $input;
         }
-
         return $input;
     }
-
 
     /**
      * @return string
@@ -182,18 +173,17 @@ class ApiController extends Controller
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 
-
     private function returnRedirect($msg, Request $request)
     {
+
         // Remove the base part of the url, and just grab the tail end of the desired redirect, that way the
         // User can't be redirected away from your website.
         $tmp = explode('/', preg_replace('/^(http|https):\/\//', '', $request->get('_redirect')));
         array_shift($tmp);
 
-        return redirect()->to(implode('/', $tmp))->with([ 'message' => 'Successfully created resource' ]);
+        return redirect()->to(implode('/', $tmp))->with([ 'message' => $msg ]);
 
     }
-
 
     /**
      * @param         $model_name
@@ -205,7 +195,6 @@ class ApiController extends Controller
     public function putModel($model_name, $id, Request $request)
     {
         $this->checkParams(func_get_args());
-        \Carbon\Carbon::createFromFormat('m-d-Y',$request->get('finish_by'));
         $model = $this->findModel($model_name, $id);
         if (empty( $model ) && $request->ajax()) {
             return response()->json([ 'message' => 'No resource found!', 'code' => 404 ], 404);
@@ -214,23 +203,20 @@ class ApiController extends Controller
                 return $this->returnRedirect('No resource found!', $request);
             }
         }
-        $input = $this->clearInput($request->all());
-        $this->validatePut($input, $model, $model_name);
+        $input = $this->clearInput($request->all()); // Remove the empty values.
+        $this->validatePut($input, $model, $model_name);// Remove any values that are the same
 
-        if (empty( $input )) {
-            return response()->json([ 'message' => 'Nothing to update for resource', 'code' => 205 ], 202);
+        if (collect($input)->isEmpty()) { // if the input is empty,
+            return response()->json([ 'message' => 'Nothing to update for resource', 'code' => 205 ], 205);
         }
 
-        if ($request->hasFile('path') && $request->file('path')->isValid()) {
-            $file = $request->file('path');
-            $path = base_path() . '/storage/pdfs/';
-            $name = sha1_file($file->getClientOriginalName() . time(true)) . '.' . $file->getClientOriginalExtension();
-            if ($file->move($path)) {
-                $input['path'] = $path . $name;
-            } else {
-                return response()->json([ 'message' => $file->getErrorMessage(), 'code' => 422 ], 422);
-            }
-        }
+        $input = collect($model->toArray())->merge($input)->toArray();
+
+        $model->fill($input);
+
+        // Removed the file handling code, as put requested files come in via stdin.
+        // Just use a post request unless you NEED the put request.
+
         $relations = config('kregel.warden.models.' . $model_name . '.relations');
         if ( ! empty( $relations )) {
             foreach ($input as $k => $i) {
@@ -240,11 +226,15 @@ class ApiController extends Controller
                 }
             }
         }
-        $model->fill($input);
 
         $saved = $model->save();
         if ( ! $saved) {
             return response()->json([ 'message' => 'Failed to updated resource', 'code' => 422 ], 422);
+        }
+        if ($request->has('_redirect')) {
+            // Remove the base part of the url, and just grab the tail end of the desired redirect, that way the
+            // User can't be redirected away from your website.
+            return $this->returnRedirect('Successfully updated resource', $request);
         }
         $status = $request->ajax() ? 202 : 200;
 
@@ -263,7 +253,7 @@ class ApiController extends Controller
     public function validatePut(&$input, $model, $model_name)
     {
         foreach ($input as $k => $v) {
-            if (empty( $v ) || $k == '_token') {
+            if (empty( $v ) || $k === '_token') {
                 unset( $input[$k] );
             }
             if ( ! empty( $model->$k )) {
