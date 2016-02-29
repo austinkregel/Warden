@@ -323,7 +323,11 @@ class ApiController extends Controller
             return response()->json([ 'message' => 'No resource found!', 'code' => 404 ], 404);
         }
         $model->delete();
-
+        if ($request->has('_redirect')) {
+            // Remove the base part of the url, and just grab the tail end of the desired redirect, that way the
+            // User can't be redirected away from your website.
+            return $this->returnRedirect('Successfully updated resource', $request);
+        }
         return response()->json([ 'message' => 'Successfully deleted resource', 'code' => $status ], $status);
     }
 }
