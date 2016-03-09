@@ -3,13 +3,10 @@
 namespace Kregel\Warden\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 
 class ApiController extends Controller
 {
-
     /**
      * @param         $model_name
      * @param Request $request
@@ -19,8 +16,8 @@ class ApiController extends Controller
     public function g($model_name, Request $request)
     {
         $this->checkParams(func_get_args()); // Filler bullshit.
-        $code       = $request->ajax() ? 202 : 200;
-        $returnable = [ 'message' => 'Method success, but nothing was done.', 'code' => $code ];
+        $code = $request->ajax() ? 202 : 200;
+        $returnable = ['message' => 'Method success, but nothing was done.', 'code' => $code];
 
         return response()->json($returnable, $code);
     }
@@ -46,20 +43,20 @@ class ApiController extends Controller
     public function getSomeModels($model_name, Request $request, $paginate = 100)
     {
         $this->checkParams(func_get_args());
-        $model       = $this->findModel($model_name);
+        $model = $this->findModel($model_name);
         $field_names = $this->getFields($model);
-        $all         = $model::paginate($paginate);
-        $i           = 0;
+        $all = $model::paginate($paginate);
+        $i = 0;
         foreach ($all as $model) {
             foreach ($field_names as $f) {
-                if ( ! in_array($f, $model->getHidden())) {
-                    $returnable[$model_name . 's'][$i] = $model->toArray();
+                if (!in_array($f, $model->getHidden())) {
+                    $returnable[$model_name.'s'][$i] = $model->toArray();
                 }
             }
             ++$i;
         }
-        if (empty( $returnable )) {
-            $returnable = [ ];
+        if (empty($returnable)) {
+            $returnable = [];
         }
         $status = $request->ajax() ? 202 : 200;
 
@@ -74,8 +71,8 @@ class ApiController extends Controller
      */
     public function findModel($model_name, $id = null)
     {
-        $model = config('kregel.warden.models.' . $model_name . '.model');
-        if (empty( $id ) | ! is_numeric($id)) {
+        $model = config('kregel.warden.models.'.$model_name.'.model');
+        if (empty($id) | !is_numeric($id)) {
             return new $model();
         }
 
@@ -89,8 +86,8 @@ class ApiController extends Controller
      */
     private function getFields($model)
     {
-        $field_names = ! empty( $model->getVisible() ) ? $model->getVisible() : $model->getFillable();
-        $dates       = ! empty( $model->getDates() ) ? $model->getDates() : [ ];
+        $field_names = !empty($model->getVisible()) ? $model->getVisible() : $model->getFillable();
+        $dates = !empty($model->getDates()) ? $model->getDates() : [];
 
         return array_merge($field_names, $dates);
     }
@@ -105,9 +102,9 @@ class ApiController extends Controller
     {
         $this->checkParams(func_get_args());
         $model = $this->findModel($model_name);
-        if (empty( $model )) {
+        if (empty($model)) {
             if ($request->ajax()) {
-                return response()->json([ 'message' => 'No resource found!', 'code' => 404 ], 404);
+                return response()->json(['message' => 'No resource found!', 'code' => 404], 404);
             }
 
             return response(redirect('404'), 301);
@@ -116,16 +113,16 @@ class ApiController extends Controller
         // way to validate the inputs then we might have some un-wanted inputs from
         // some of the users. We probably won't need to worry about validations.
         $input = $this->clearInput([
-            'uuid' => $this->generateUUID()
+            'uuid' => $this->generateUUID(),
         ] + $request->all());
 
         $model->fill($input);
-        if ( ! empty( $model->password )) {
+        if (!empty($model->password)) {
             $model->password = bcrypt($model->password);
         }
-        $inputs    = $model->getFillable();
-        $relations = config('kregel.warden.models.' . $model_name . '.relations');
-        if ( ! empty( $relations )) {
+        $inputs = $model->getFillable();
+        $relations = config('kregel.warden.models.'.$model_name.'.relations');
+        if (!empty($relations)) {
             foreach ($inputs as $i) {
                 if (in_array($i, $relations)) {
                     $model->$i->sync($input[$i]);
@@ -133,12 +130,12 @@ class ApiController extends Controller
             }
         }
         $saved = $model->save();
-        if ( ! $saved) {
-            return response()->json([ 'message' => 'Failed to created resource', 'code' => 422 ], 422);
+        if (!$saved) {
+            return response()->json(['message' => 'Failed to created resource', 'code' => 422], 422);
         }
         $status = $request->ajax() ? 202 : 200;
         if ($request->ajax()) {
-            return response()->json([ 'message' => 'Successfully created resource', 'code' => $status ], $status);
+            return response()->json(['message' => 'Successfully created resource', 'code' => $status], $status);
         }
         if ($request->has('_redirect')) {
             // Remove the base part of the url, and just grab the tail end of the desired redirect, that way the
@@ -146,19 +143,21 @@ class ApiController extends Controller
             return $this->returnRedirect('Successfully created resource', $request);
         }
 
-        return redirect()->back()->with([ 'message' => 'Successfully created resource' ]);
+        return redirect()->back()->with(['message' => 'Successfully created resource']);
     }
 
     public function clearInput($input)
     {
         if (is_array($input)) {
             foreach ($input as $key => $value) {
-                if ( ! isset( $value ) || $value === '') {
-                    unset( $input[$key] );
+                if (!isset($value) || $value === '') {
+                    unset($input[$key]);
                 }
             }
+
             return $input;
         }
+
         return $input;
     }
 
@@ -167,7 +166,7 @@ class ApiController extends Controller
      */
     public function generateUUID()
     {
-        $data    = openssl_random_pseudo_bytes(16);
+        $data = openssl_random_pseudo_bytes(16);
         $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
         $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
@@ -181,8 +180,7 @@ class ApiController extends Controller
         $tmp = explode('/', preg_replace('/^(http|https):\/\//', '', $request->get('_redirect')));
         array_shift($tmp);
 
-        return redirect()->to(implode('/', $tmp))->with([ 'message' => $msg ]);
-
+        return redirect()->to(implode('/', $tmp))->with(['message' => $msg]);
     }
 
     /**
@@ -196,10 +194,10 @@ class ApiController extends Controller
     {
         $this->checkParams(func_get_args());
         $model = $this->findModel($model_name, $id);
-        if (empty( $model ) && $request->ajax()) {
-            return response()->json([ 'message' => 'No resource found!', 'code' => 404 ], 404);
+        if (empty($model) && $request->ajax()) {
+            return response()->json(['message' => 'No resource found!', 'code' => 404], 404);
         } else {
-            if (empty( $model )) {
+            if (empty($model)) {
                 return $this->returnRedirect('No resource found!', $request);
             }
         }
@@ -207,7 +205,7 @@ class ApiController extends Controller
         $this->validatePut($input, $model, $model_name);// Remove any values that are the same
 
         if (collect($input)->isEmpty()) { // if the input is empty,
-            return response()->json([ 'message' => 'Nothing to update for resource', 'code' => 205 ], 205);
+            return response()->json(['message' => 'Nothing to update for resource', 'code' => 205], 205);
         }
 
         $input = collect($model->toArray())->merge($input)->toArray();
@@ -217,19 +215,18 @@ class ApiController extends Controller
         // Removed the file handling code, as put requested files come in via stdin.
         // Just use a post request unless you NEED the put request.
 
-        $relations = config('kregel.warden.models.' . $model_name . '.relations');
-        if ( ! empty( $relations )) {
+        $relations = config('kregel.warden.models.'.$model_name.'.relations');
+        if (!empty($relations)) {
             foreach ($input as $k => $i) {
                 if (in_array($k, $relations)) {
-
                     $model->$k()->sync($i);
                 }
             }
         }
 
         $saved = $model->save();
-        if ( ! $saved) {
-            return response()->json([ 'message' => 'Failed to updated resource', 'code' => 422 ], 422);
+        if (!$saved) {
+            return response()->json(['message' => 'Failed to updated resource', 'code' => 422], 422);
         }
         if ($request->has('_redirect')) {
             // Remove the base part of the url, and just grab the tail end of the desired redirect, that way the
@@ -238,9 +235,8 @@ class ApiController extends Controller
         }
         $status = $request->ajax() ? 202 : 200;
 
-        return response()->json([ 'message' => 'Successfully updated resource', 'code' => $status ], $status);
+        return response()->json(['message' => 'Successfully updated resource', 'code' => $status], $status);
     }
-
 
     /**
      * This Checks for any values and the _token for csrf and removes it from any
@@ -253,20 +249,20 @@ class ApiController extends Controller
     public function validatePut(&$input, $model, $model_name)
     {
         foreach ($input as $k => $v) {
-            if (empty( $v ) || $k === '_token') {
-                unset( $input[$k] );
+            if (empty($v) || $k === '_token') {
+                unset($input[$k]);
             }
-            if ( ! empty( $model->$k )) {
+            if (!empty($model->$k)) {
                 if ($model->$k === $v) {
-                    unset( $input[$k] );
+                    unset($input[$k]);
                 }
             }
             if ($this->doesModelRelate($model, $k, $v)) {
-                unset( $input[$k] );
+                unset($input[$k]);
             }
-            if (( ( stripos($k, 'password') !== false ) || ( stripos($k, 'passwd') !== false ) ) && ! empty( $model->$k )) {
+            if (((stripos($k, 'password') !== false) || (stripos($k, 'passwd') !== false)) && !empty($model->$k)) {
                 if (\Hash::check($v, $model->$k)) {
-                    unset( $input[$k] );
+                    unset($input[$k]);
                 } else {
                     $input[$k] = bcrypt($v);
                 }
@@ -274,10 +270,9 @@ class ApiController extends Controller
         }
     }
 
-
     private function doesModelRelate(Model $model, $relation, $objects)
     {
-        $relations = config('kregel.warden.models.' . $relation . '.relations');
+        $relations = config('kregel.warden.models.'.$relation.'.relations');
         if ($relations !== null && in_array($relation, $relations)) {
             if (is_array($objects)) {
                 foreach ($objects as $k => $v) {
@@ -292,7 +287,6 @@ class ApiController extends Controller
 
         return false;
     }
-
 
     /**
      * @param         $model_name
@@ -309,18 +303,18 @@ class ApiController extends Controller
         $status = $request->ajax() ? 202 : 200;
 
         $model = $this->findModel($model_name, $id);
-        if (empty( $model->id )) {
+        if (empty($model->id)) {
             if ($model = $model::withTrashed()->whereId($id)->first()) {
-                $relations = config('kregel.warden.models.' . $model_name . '.relations');
+                $relations = config('kregel.warden.models.'.$model_name.'.relations');
                 foreach ($relations as $rel) {
                     $model->$rel()->forceDelete();
                 }
                 $model->forceDelete();
 
-                return response()->json([ 'message' => 'Resource deleted from the system.', 'code' => $status ], $status);
+                return response()->json(['message' => 'Resource deleted from the system.', 'code' => $status], $status);
             }
 
-            return response()->json([ 'message' => 'No resource found!', 'code' => 404 ], 404);
+            return response()->json(['message' => 'No resource found!', 'code' => 404], 404);
         }
         $model->delete();
         if ($request->has('_redirect')) {
@@ -328,6 +322,7 @@ class ApiController extends Controller
             // User can't be redirected away from your website.
             return $this->returnRedirect('Successfully updated resource', $request);
         }
-        return response()->json([ 'message' => 'Successfully deleted resource', 'code' => $status ], $status);
+
+        return response()->json(['message' => 'Successfully deleted resource', 'code' => $status], $status);
     }
 }

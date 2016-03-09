@@ -8,10 +8,10 @@
             @endif
             <?php
             $count = count($components);
-            $i =0;
-            foreach($components as $c){
-                echo "\t".$c.': \'\''.((($count - 1) == $i)?'':','). "\n";
-                $i++;
+            $i = 0;
+            foreach ($components as $c) {
+                echo "\t".$c.': \'\''.((($count - 1) == $i) ? '' : ',')."\n";
+                ++$i;
             }?>
         }
     };
