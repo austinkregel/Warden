@@ -62,7 +62,7 @@
 									</td>
 									<td>
 										<span style="text-align:right;float:right; font-size:24px;padding-right:10px;">
-										<form action="{{route('warden::delete-model', $model->id)}}" method='post'>
+										<form action="{{route('warden::api.delete-model', $model->id)}}" method='post'>
 											<input type="hidden" name="_method" value="DELETE">
 											@if(config('kregel.warden.using.csrf')) <input type="hidden" name="_token" value="{{csrf_token()}}">@endif
 											<button type="submit" class="method-button"><i class="@if(config('kregel.warden.using.fontawesome') === true) fa fa-trash-o @else glyphicon glyphicon-trash @endif"></i></button>
