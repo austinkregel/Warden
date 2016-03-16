@@ -29,6 +29,6 @@ Route::group(['prefix' => config('kregel.warden.route'), 'as' => 'warden::', 'mi
         Route::put('{model}/{id}', ['as' => 'update-model', 'uses' => 'ApiController@putModel']);
 
         // Should delete a model.
-        Route::delete('{model}/{id}', ['as' => 'delete-model', 'uses' => 'ApiController@deleteModel']);
+        Route::delete('d/{model}/{id}', ['as' => 'delete-model', 'uses' => 'ApiController@deleteModel']);
     });
 });
