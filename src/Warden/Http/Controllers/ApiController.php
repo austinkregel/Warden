@@ -36,7 +36,7 @@ class ApiController extends Controller
     /**
      * @param         $model_name
      * @param Request $request
-     * @param int     $paginate
+     * @param int $paginate
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -50,7 +50,7 @@ class ApiController extends Controller
         foreach ($all as $model) {
             foreach ($field_names as $f) {
                 if (!in_array($f, $model->getHidden())) {
-                    $returnable[$model_name.'s'][$i] = $model->toArray();
+                    $returnable[$model_name . 's'][$i] = $model->toArray();
                 }
             }
             ++$i;
@@ -71,7 +71,7 @@ class ApiController extends Controller
      */
     public function findModel($model_name, $id = null)
     {
-        $model = config('kregel.warden.models.'.$model_name.'.model');
+        $model = config('kregel.warden.models.' . $model_name . '.model');
         if (empty($id) | !is_numeric($id)) {
             return new $model();
         }
@@ -113,15 +113,15 @@ class ApiController extends Controller
         // way to validate the inputs then we might have some un-wanted inputs from
         // some of the users. We probably won't need to worry about validations.
         $input = $this->clearInput([
-            'uuid' => $this->generateUUID(),
-        ] + $request->all());
+                'uuid' => $this->generateUUID(),
+            ] + $request->all());
 
         $model->fill($input);
         if (!empty($model->password)) {
             $model->password = bcrypt($model->password);
         }
         $inputs = $model->getFillable();
-        $relations = config('kregel.warden.models.'.$model_name.'.relations');
+        $relations = config('kregel.warden.models.' . $model_name . '.relations');
         if (!empty($relations)) {
             foreach ($inputs as $i) {
                 if (in_array($i, $relations)) {
@@ -215,7 +215,7 @@ class ApiController extends Controller
         // Removed the file handling code, as put requested files come in via stdin.
         // Just use a post request unless you NEED the put request.
 
-        $relations = config('kregel.warden.models.'.$model_name.'.relations');
+        $relations = config('kregel.warden.models.' . $model_name . '.relations');
         if (!empty($relations)) {
             foreach ($input as $k => $i) {
                 if (in_array($k, $relations)) {
@@ -264,7 +264,11 @@ class ApiController extends Controller
                 if (\Hash::check($v, $model->$k)) {
                     unset($input[$k]);
                 } else {
-                    $input[$k] = bcrypt($v);
+                    $user_model = config('auth.model');
+                    $user = new $user_model;
+                    if (empty($user->hashable)) {
+                        $input[$k] = bcrypt($v);
+                    }
                 }
             }
         }
@@ -272,7 +276,7 @@ class ApiController extends Controller
 
     private function doesModelRelate(Model $model, $relation, $objects)
     {
-        $relations = config('kregel.warden.models.'.$relation.'.relations');
+        $relations = config('kregel.warden.models.' . $relation . '.relations');
         if ($relations !== null && in_array($relation, $relations)) {
             if (is_array($objects)) {
                 foreach ($objects as $k => $v) {
@@ -281,7 +285,7 @@ class ApiController extends Controller
                     }
                 }
             } else {
-                return (bool) $model->$relation->contains($objects);
+                return (bool)$model->$relation->contains($objects);
             }
         }
 
@@ -305,7 +309,7 @@ class ApiController extends Controller
         $model = $this->findModel($model_name, $id);
         if (empty($model->id)) {
             if ($model = $model::withTrashed()->whereId($id)->first()) {
-                $relations = config('kregel.warden.models.'.$model_name.'.relations');
+                $relations = config('kregel.warden.models.' . $model_name . '.relations');
                 foreach ($relations as $rel) {
                     $model->$rel()->forceDelete();
                 }
