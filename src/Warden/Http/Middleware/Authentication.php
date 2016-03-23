@@ -8,7 +8,6 @@
  * custom middleware and to not use this middleware for
  * customization!
  */
-
 namespace Kregel\Warden\Http\Middleware;
 
 use Closure;
