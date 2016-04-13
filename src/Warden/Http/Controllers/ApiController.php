@@ -4,6 +4,7 @@ namespace Kregel\Warden\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Closure;
 
 class ApiController extends Controller
 {
@@ -67,7 +68,7 @@ class ApiController extends Controller
      * @param      $model_name
      * @param null $id
      *
-     * @return mixed
+     * @return Model
      */
     public function findModel($model_name, $id = null)
     {
@@ -80,11 +81,11 @@ class ApiController extends Controller
     }
 
     /**
-     * @param $model
+     * @param Model $model
      *
      * @return array
      */
-    private function getFields($model)
+    private function getFields(Model $model)
     {
         $field_names = !empty($model->getVisible()) ? $model->getVisible() : $model->getFillable();
         $dates = !empty($model->getDates()) ? $model->getDates() : [];
@@ -123,11 +124,16 @@ class ApiController extends Controller
         $inputs = $model->getFillable();
         $relations = config('kregel.warden.models.' . $model_name . '.relations');
         if (!empty($relations)) {
-            foreach ($inputs as $i) {
-                if (in_array($i, $relations)) {
-                    $model->$i->sync($input[$i]);
+            foreach ($input as $k => $i) {
+                if (in_array($k, $relations) || !(empty($relations[$k]))) { // Check if there is a relation
+                    // if it's in_array, it's not a closure, just have to sync. Otherwise it's a closure
+                    // And we will have to call the closure and pass through the need model to it.
+                    $model->$k()->sync($i);
+                    $update_event = config('kregel.warden.models.'.$model_name.'.relations.'.$k.'.new');
+                    if($update_event instanceof Closure){
+                        $update_event($model);
+                    }
                 }
-            }
         }
         $saved = $model->save();
         if (!$saved) {
@@ -218,8 +224,15 @@ class ApiController extends Controller
         $relations = config('kregel.warden.models.' . $model_name . '.relations');
         if (!empty($relations)) {
             foreach ($input as $k => $i) {
-                if (in_array($k, $relations)) {
+
+                if (in_array($k, $relations) || !(empty($relations[$k]))) { // Check if there is a relation
+                    // if it's in_array, it's not a closure, just have to sync. Otherwise it's a closure
+                    // And we will have to call the closure and pass through the need model to it.
                     $model->$k()->sync($i);
+                    $update_event = config('kregel.warden.models.'.$model_name.'.relations.'.$k.'.update');
+                    if($update_event instanceof Closure){
+                        $update_event($model);
+                    }
                 }
             }
         }
@@ -312,6 +325,11 @@ class ApiController extends Controller
                 $relations = config('kregel.warden.models.' . $model_name . '.relations');
                 foreach ($relations as $rel) {
                     $model->$rel()->forceDelete();
+
+                    $update_event = config('kregel.warden.models.'.$model_name.'.relations.'.$rel.'.delete');
+                    if($update_event instanceof Closure){
+                        $update_event($model);
+                    }
                 }
                 $model->forceDelete();
 
