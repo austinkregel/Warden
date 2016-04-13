@@ -233,7 +233,7 @@ class ApiController extends Controller
                     foreach($model->$k as $user){
                         $users[] = $user->id;
                     }
-                    if($users == $i) {
+                    if($users != $i) {
                         $model->$k()->sync($i);
                         $update_event = config('kregel.warden.models.' . $model_name . '.relations.' . $k . '.update');
                         if ($update_event instanceof Closure) {
