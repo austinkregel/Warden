@@ -233,16 +233,7 @@ class ApiController extends Controller
                     foreach($model->$k as $user){
                         $users[] = $user->id;
                     }
-                    $user_models_updated = true;
-                    foreach($users as $user_id){
-                        if(in_array($user_id, $i)){
-                            $user_models_updated = false;
-                        } else {
-                            $user_models_updated = true;
-                            break;
-                        }
-                    }
-                    if($user_models_updated === true) {
+                    if($users == $i) {
                         $model->$k()->sync($i);
                         $update_event = config('kregel.warden.models.' . $model_name . '.relations.' . $k . '.update');
                         if ($update_event instanceof Closure) {
