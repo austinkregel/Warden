@@ -229,10 +229,22 @@ class ApiController extends Controller
                 if (in_array($k, $relations) || !(empty($relations[$k]))) { // Check if there is a relation
                     // if it's in_array, it's not a closure, just have to sync. Otherwise it's a closure
                     // And we will have to call the closure and pass through the need model to it.
-                    $model->$k()->sync($i);
-                    $update_event = config('kregel.warden.models.'.$model_name.'.relations.'.$k.'.update');
-                    if($update_event instanceof Closure){
-                        $update_event($model);
+                    $users = [];
+                    foreach($model->$k as $user){
+                        $users[] = $user->id;
+                    }
+                    $user_models_updated = false;
+                    foreach($users as $user_id){
+                        if(!in_array($user_id, $i)){
+                            $user_models_updated = true;
+                        }
+                    }
+                    if($user_models_updated === true) {
+                        $model->$k()->sync($i);
+                        $update_event = config('kregel.warden.models.' . $model_name . '.relations.' . $k . '.update');
+                        if ($update_event instanceof Closure) {
+                            $update_event($model);
+                        }
                     }
                 }
             }
