@@ -31,11 +31,11 @@ return [
     'views' => [
         'base-layout' => 'spark::layouts.app',
     ],
-    /*
-      * Just to make sure that there are fewer things to edit,
-      * by default we use the auth.model configuration from
-      * the default location to ensure this will work oob
-      */
+    /**
+     * Just to make sure that there are fewer things to edit,
+     * by default we use the auth.model configuration from
+     * the default location to ensure this will work oob
+     */
     'models' => [
         'user' => [
             // For model events themselves, please reference the
@@ -56,5 +56,6 @@ return [
                 ]
             ]
         ],
+
     ],
 ];
