@@ -129,11 +129,12 @@ class ApiController extends Controller
                     // if it's in_array, it's not a closure, just have to sync. Otherwise it's a closure
                     // And we will have to call the closure and pass through the need model to it.
                     $model->$k()->sync($i);
-                    $update_event = config('kregel.warden.models.'.$model_name.'.relations.'.$k.'.new');
-                    if($update_event instanceof Closure){
+                    $update_event = config('kregel.warden.models.' . $model_name . '.relations.' . $k . '.new');
+                    if ($update_event instanceof Closure) {
                         $update_event($model);
                     }
                 }
+            }
         }
         $saved = $model->save();
         if (!$saved) {
