@@ -107,8 +107,7 @@ class ApiController extends Controller
             if ($request->ajax()) {
                 return response()->json(['message' => 'No resource found!', 'code' => 404], 404);
             }
-
-            return response(redirect('404'), 301);
+            return response(redirect('404'), 302);
         }
         // Need a way to validate the input for the model. If we then can not find any
         // way to validate the inputs then we might have some un-wanted inputs from
