@@ -55,14 +55,14 @@
 									@endforeach
 									<td>
 										<span style="font-size:24px;">
-										<a href="{{url('/warden/'.$model_name.'/manage/'.$model->id)}}">
+										<a href="{{route('warden::model',[$model_name,$model->id])}}">
 											<i class="@if(config('kregel.warden.using.fontawesome') === true) fa fa-edit @else glyphicon glyphicon-edit @endif"></i>
 										</a>
 										</span>
 									</td>
 									<td>
 										<span style="text-align:right;float:right; font-size:24px;padding-right:10px;">
-										<form action="{{route('warden::api.delete-model', $model->id)}}" method='post'>
+										<form id="warden_delete" action="{{route('warden::api.delete-model', [$model_name,$model->id])}}" method='post'>
 											<input type="hidden" name="_method" value="DELETE">
 											@if(config('kregel.warden.using.csrf')) <input type="hidden" name="_token" value="{{csrf_token()}}">@endif
 											<button type="submit" class="method-button"><i class="@if(config('kregel.warden.using.fontawesome') === true) fa fa-trash-o @else glyphicon glyphicon-trash @endif"></i></button>
@@ -81,4 +81,5 @@
 			</div>
 		</div>
 	</div>
+
 @stop
