@@ -98,8 +98,7 @@ class ModelController extends Controller
         return view('warden::view-model')
                 ->with('form', $form_info)
                 ->with('model_name', $model_name)
-                ->with('vue_components', $form->vue_components)
-                ->with('method', $form->options['method']);
+                ->with('vue_components', $form->vue_components);
     }
 
     /**
