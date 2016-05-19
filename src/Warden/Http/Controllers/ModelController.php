@@ -10,10 +10,6 @@ use Session;
 
 class ModelController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(config('kregel.warden.auth.middleware_name'));
-    }
 
     /**
      * @param string $model_name A key in the warden.models configuration
