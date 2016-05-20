@@ -2,7 +2,7 @@
 namespace Kregel\Warden\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
-class Authenticate
+class Authentication 
 {
     /**
      * Handle an incoming request.
