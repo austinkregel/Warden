@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Middleware;
+namespace Kregel\Warden\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 class Authenticate
