@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['prefix' => config('kregel.warden.route') . '/api/v1.0', 'as' => 'warden::api.'], function () {
+Route::group(['prefix' => config('kregel.warden.route') . '/api/v1.0', 'as' => 'warden::api.', 'middleware' => config('kregel.warden.auth.middleware_api')], function () {
     // Should retrieve almost all items...
     Route::get('{model}s', ['as' => 'get-all', 'uses' => 'ApiController@getAllModels']);
     // Should retrieve some items...
