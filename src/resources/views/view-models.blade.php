@@ -48,7 +48,11 @@
 												@if(empty($model->$field))
 													<i>No data here</i>
 												@else
-													{{$model->$field}}
+													@if(is_string($model->$field))
+						                                                        	{{ $model->$field }}
+						                                                        @else
+						                                                        	{{ collect($model->$field) }}
+						                                                        @endif
 												@endif
 											</td>
 										@endif
