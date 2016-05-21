@@ -55,7 +55,7 @@ trait Wardenable
                     }
                 }
             } else {
-                if (!empty($this->$old)) {
+                if (isset($this->$old)) {
                     $returnable[$new] = $this->$old;
                 }
             }
