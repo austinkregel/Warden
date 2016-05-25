@@ -1,60 +1,26 @@
 <?php
-
-/**
- * This is the default laravel authentication middleware,
- * it is only included incase someone doesn't have any
- * kind of authentication middleware. I am strongly
- * encouraging anyone and everyone to use their very own,
- * custom middleware and to not use this middleware for
- * customization!
- */
 namespace Kregel\Warden\Http\Middleware;
-
 use Closure;
-use Illuminate\Contracts\Auth\Guard;
-use Route;
-
-class Authentication
+use Illuminate\Support\Facades\Auth;
+class Authentication 
 {
-    /**
-     * The Guard implementation.
-     *
-     * @var Guard
-     */
-    protected $auth;
-
-    /**
-     * Create a new filter instance.
-     *
-     * @param Guard $auth
-     */
-    public function __construct(Guard $auth)
-    {
-        $this->auth = $auth;
-    }
-
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
-     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @param  string|null  $guard
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle($request, Closure $next, $guard = null)
     {
-        if ($this->auth->guest()) {
-            if ($request->ajax()) {
+        if (Auth::guard($guard)->guest()) {
+            if ($request->ajax() || $request->wantsJson()) {
                 return response('Unauthorized.', 401);
             } else {
-                if (Route::has(config('kregel.warden.auth.route'))) {
-                    return redirect()->intended(route(config('kregel.warden.auth.route')));
-                } else {
-                    return redirect()->intended(url(config('kregel.warden.auth.fail_over_route')));
-                }
+                return redirect()->guest('login');
             }
         }
-
         return $next($request);
     }
 }
