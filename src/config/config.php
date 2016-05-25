@@ -8,9 +8,7 @@ return [
          * should ensure that the user is logged in.
          */
         'middleware' => Kregel\Warden\Http\Middleware\Authentication::class,
-	'middleware_api' => Kregel\Warden\Http\Middlware\Authenticate::class,
         'middleware_name' => 'custom-auth',
-	'middleware_name_api' => 'custom-auth-api',
         /*
          * Name of a login route, it's recommended to have it named, but incase
          * that doesn't work we have the 'fail_over_route' config to choose.

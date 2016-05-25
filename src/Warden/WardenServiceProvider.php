@@ -2,8 +2,7 @@
 
 namespace Kregel\Warden;
 
-use Illuminate\Routing\Router;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
 class WardenServiceProvider extends ServiceProvider
 {
@@ -13,8 +12,6 @@ class WardenServiceProvider extends ServiceProvider
      * @var bool
      */
     protected $defer = false;
-
-    protected $namespace = 'Kregel\Warden\Http\Controllers';
 
     /**
      * Register the service provider.
@@ -31,9 +28,11 @@ class WardenServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(Router $router)
+    public function boot()
     {
-	parent::boot($router);
+        $this->app->booted(function () {
+            $this->defineRoutes();
+        });
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'warden');
         $this->publishes([
@@ -49,34 +48,17 @@ class WardenServiceProvider extends ServiceProvider
     }
 
     /**
-     * Define the routes for the application.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
+     * Define the UserManagement routes.
      */
-    public function map(Router $router)
+    protected function defineRoutes()
     {
-        $this->mapWebRoutes($router);
-        //
-    }
+        if (!$this->app->routesAreCached()) {
+            $router = app('router');
 
-    /**
-     * Define the "web" routes for the application.
-     *
-     * These routes all receive session state, CSRF protection, etc.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
-     */
-    protected function mapWebRoutes(Router $router)
-    {
-        $router->group(['namespace' => $this->namespace, 'middleware' => 'web'], function ($router) {
-            require __DIR__ .('/Http/routes.php');
-        });
-        $router->group(['namespace' => $this->namespace, 'middleware' => 'api'], function ($router) {
-            require __DIR__ .('/Http/api_routes.php');
-        });
-
+            $router->group(['namespace' => 'Kregel\\Warden\\Http\\Controllers'], function ($router) {
+                require __DIR__.'/Http/routes.php';
+            });
+        }
     }
 
     /**
