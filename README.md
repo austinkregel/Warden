@@ -22,7 +22,9 @@ All you need is to do the following, then add your models to the `config/warden.
   ]
   ```
   3.  Publish the config file! This should be able to be done with `php artisan vendor:publish` once published, add in your
-      models to the `config/warden.php` file and tweak it they way you need it..
+      models to the `config/warden.php` file and tweak it they way you need it.. 
+
+###### Keep in mind that the first key located in the 'models' array is the name of your model that will be referenced when you use the API.
 
 ```php
 'models' => [
@@ -36,7 +38,7 @@ All you need is to do the following, then add your models to the `config/warden.
 ],
 ```
   4.  Once you have everything installed and configured, you actually can navigate to your website by going to http://(yourwebsite.com)/warden/(yourmodel)s/manage
-      So that means that if I had this installed on my website and set up with my users model I would go to http://austinkregel.com/warden/users/manage
+      So that means that if I had this installed on my website and set up with my users model I would go to https://austinkregel.com/warden/users/manage
 
 ### Extra features?
 Out of the box, there is a `Kregel\Warden\Traits\Wardenable` trait, which can be used when you want an api responsive system. What it does it mean (in this case) to keep your api 
@@ -59,6 +61,19 @@ What the client would see in the api is just the 'id' field same as before, but 
 The main branch will be moved to a [VueJS](http://vuejs.org) based sysetm. Same with the [FormModel](http://github.com/austinkregel/formmodel) package. If someone from the community 
 wants to help keep things up to date please submit a pull request. :)
 =======
+
+### Using the API
+You can use Warden to handle your API for creating, deleting, and updating models.
+
+If you're looking to create a new item you can use the following route as your form's action
+
+    {{ route('warden::api.create-model', $your_model_name) }}
+     
+If you want to update your model, you can just put this as your form's action
+
+    {{ route('warden::api.update-model', $your_model_name) }}
+    
+ Be sure to rember that when you do something other than a post/get you MUST use the pseudo input named _method and a value of PUT, DELETE, or really which ever method you need.
 
 # Questions?
 Email me (my email is on [my github page](http://github.com/austinkregel)), or you can drop an issue. :)
