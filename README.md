@@ -76,4 +76,4 @@ If you want to update your model, you can just put this as your form's action
  Be sure to rember that when you do something other than a post/get you MUST use the pseudo input named _method and a value of PUT, DELETE, or really which ever method you need.
 
 # Questions?
-Email me (my email is on [my github page](http://github.com/austinkregel)), or you can drop an issue. :)
+Email me, my email is on [my github page](http://github.com/austinkregel), or you can make an issue. :)
