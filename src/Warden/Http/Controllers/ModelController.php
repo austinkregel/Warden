@@ -62,7 +62,7 @@ class ModelController extends Controller
             return new $model();
         }
 
-        return $this->get('warden::api.get-model', [$model_name, $id]);
+        return $model::findOrFail($id);
     }
 
     /**
