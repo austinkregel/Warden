@@ -283,8 +283,8 @@ class ApiController extends Controller
                 if (\Hash::check($v, $model->$k)) {
                     unset($input[$k]);
                 } else {
-                    $user_model = config('auth.model');
-                    $user = new $user_model();
+                    $model_ = config('kregel.warden.models.'.$model_name.'.model');
+                    $user = new $model_();
                     if (empty($user->hashable)) {
                         $input[$k] = bcrypt($v);
                     }
