@@ -82,7 +82,7 @@ class ModelController extends Controller
        * We need to grab the model from the config and select one entry for
        * that model from within the database.
        */
-        $model = $this->findModel($model_name, $id)->getOriginalContent();
+        $model = $this->findModel($model_name, $id);
         /*
          * Here we generate the form to update the model using the kregel/formmodel
          * package
