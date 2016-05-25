@@ -117,7 +117,7 @@ class ApiController extends Controller
             ] + $request->all());
 
         $model->fill($input);
-        if (!empty($model->password)) {
+        if (isset($model->password)) {
             $model->password = bcrypt($model->password);
         }
         $inputs = $model->getFillable();
