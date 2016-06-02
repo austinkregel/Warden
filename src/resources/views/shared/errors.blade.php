@@ -21,4 +21,17 @@
 			@endif
 		</ul>
 	</div>
+@elseif(!empty($message))
+	<div class="alert alert-success">
+		<strong>It worked!</strong>
+		<ul>
+			@if(is_array($message))
+				@foreach($message as $msg)
+					<li>{{ $msg }}</li>
+				@endforeach
+			@else
+				<li>{{$message}}</li>
+			@endif
+		</ul>
+	</div>
 @endif
