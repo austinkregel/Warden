@@ -18,5 +18,4 @@
             "Kregel\\Warden\\": "src/Warden"
         }
     },
-    "minimum-stability": "stable"
 }
