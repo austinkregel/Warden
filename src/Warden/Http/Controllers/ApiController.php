@@ -41,7 +41,7 @@ class ApiController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getSomeModels($model_name, Request $request, $paginate = 100)
+    public function getSomeModels($model_name, Request $request, $paginate = 10)
     {
         $this->checkParams(func_get_args());
         $model = $this->findModel($model_name);
