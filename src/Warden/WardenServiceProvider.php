@@ -45,7 +45,7 @@ class WardenServiceProvider extends ServiceProvider
 
         // Define our custom authentication to make
         // sure that the user is logged in!
-        $this->app['router']->middleware('custom-auth', config('kregel.warden.auth.middleware'));
+        //$this->app['router']->middleware('custom-auth', config('kregel.warden.auth.middleware'));
     }
 
     /**
@@ -70,7 +70,7 @@ class WardenServiceProvider extends ServiceProvider
      */
     protected function mapWebRoutes(Router $router)
     {
-        $router->group(['namespace' => $this->namespace, 'middleware' => 'web'], function ($router) {
+        $router->group(['namespace' => $this->namespace], function ($router) {
             require __DIR__ .('/Http/routes.php');
         });
         $router->group(['namespace' => $this->namespace, 'middleware' => 'api'], function ($router) {
