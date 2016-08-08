@@ -2,6 +2,7 @@
 
 namespace Kregel\Warden;
 
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
 class WardenServiceProvider extends ServiceProvider
@@ -13,6 +14,11 @@ class WardenServiceProvider extends ServiceProvider
      */
     protected $defer = false;
 
+    /**
+     * Indicates the namespace of this package's routing
+     * @var string
+     */
+    protected $namespace = 'Kregel\\Warden\\Http\\Controllers';
     /**
      * Register the service provider.
      */
@@ -28,11 +34,9 @@ class WardenServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot()
+    public function boot(Router $router)
     {
-        $this->app->booted(function () {
-            $this->defineRoutes();
-        });
+        $this->defineRoutes($router);
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'warden');
         $this->publishes([
@@ -41,33 +45,42 @@ class WardenServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/config.php' => config_path('kregel/warden.php'),
         ], 'config');
-
-        // Define our custom authentication to make
-        // sure that the user is logged in!
-        $this->app['router']->middleware('custom-auth', config('kregel.warden.auth.middleware'));
     }
 
     /**
      * Define the UserManagement routes.
      */
-    protected function defineRoutes()
+    protected function defineRoutes(Router $router)
     {
         if (!$this->app->routesAreCached()) {
-            $router = app('router');
+            $this->mapWebRoutes($router);
 
-            $router->group(['namespace' => 'Kregel\\Warden\\Http\\Controllers'], function ($router) {
-                require __DIR__.'/Http/routes.php';
-            });
+            $this->mapApiRoutes($router);
         }
     }
 
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
+    protected function mapWebRoutes($router)
     {
-        return [];
+        $router->group([
+            'namespace' => $this->namespace,
+            'prefix' => config('kregel.warden.route'),
+            'as' => 'warden::',
+            'middleware' => config('kregel.warden.auth.middleware')
+        ], function () use ($router) {
+            require __DIR__.'/routes/web.php';
+        });
+    }
+
+
+    protected function mapApiRoutes($router)
+    {
+        $router->group([
+            'namespace' => $this->namespace,
+            'prefix' => config('kregel.warden.route'). '/api/v1.0',
+            'as' => 'warden::api.',
+            'middleware' => config('kregel.warden.auth.middleware_api')
+        ], function ($router) {
+            require __DIR__.'/routes/api.php';
+        });
     }
 }
