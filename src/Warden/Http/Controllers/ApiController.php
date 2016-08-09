@@ -25,13 +25,14 @@ class ApiController extends Controller
     public function getAllModels($model_name, Request $request)
     {
         $this->model_name = $model_name;
+
         return $this->getSomeModels($request, 500);
     }
 
     /**
      * @param         $model_name
      * @param Request $request
-     * @param int $paginate
+     * @param int     $paginate
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -40,6 +41,7 @@ class ApiController extends Controller
         $this->checkParams(func_get_args());
         $model = $this->findModel($model_name);
         $status = $request->ajax() ? 202 : 200;
+
         return response()->json($model->paginate($paginate), $status);
     }
 
@@ -51,10 +53,11 @@ class ApiController extends Controller
      */
     public function findModel($model_name, $id = null)
     {
-        $model = config('kregel.warden.models.' . $model_name . '.model');
+        $model = config('kregel.warden.models.'.$model_name.'.model');
         if (empty($id) | !is_numeric($id)) {
             return new $model();
         }
+
         return $model::find($id);
     }
 
@@ -94,39 +97,41 @@ class ApiController extends Controller
                 // if it's in_array, it's not a closure, just have to sync. Otherwise it's a closure
                 // And we will have to call the closure and pass through the need model to it.
                 $model->$k()->sync($i);
-                $update_event = config('kregel.warden.models.' . $model_name . '.relations.' . $k . '.new');
+                $update_event = config('kregel.warden.models.'.$model_name.'.relations.'.$k.'.new');
                 if ($update_event instanceof Closure) {
                     $update_event($model);
                 }
             }
         }
+
         return $this->modelHasBeenSaved($model->save(), 'created', $request);
     }
 
     /**
      * This method handles how submitted quests are handle, the main related methods for it are
-     * POST and
+     * POST and.
      *
      * @param $saved
      * @param $request
+     *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     protected function modelHasBeenSaved($saved, $type, $request)
     {
         if (!$saved) {
-            return response()->json(['message' => 'Failed to ' . trim($type, 'ed') . ' resource', 'code' => 422], 422);
+            return response()->json(['message' => 'Failed to '.trim($type, 'ed').' resource', 'code' => 422], 422);
         }
         $status = $request->ajax() ? 202 : 200;
         if ($request->ajax()) {
-            return response()->json(['message' => 'Successfully ' . $type . ' resource', 'code' => $status], $status);
+            return response()->json(['message' => 'Successfully '.$type.' resource', 'code' => $status], $status);
         }
         if ($request->has('_redirect')) {
             // Remove the base part of the url, and just grab the tail end of the desired redirect, that way the
             // User can't be redirected away from your website.
-            return $this->returnRedirect('Successfully ' . $type . ' resource', $request);
+            return $this->returnRedirect('Successfully '.$type.' resource', $request);
         }
 
-        return redirect()->back()->with(['message' => 'Successfully ' . $type . ' resource']);
+        return redirect()->back()->with(['message' => 'Successfully '.$type.' resource']);
     }
 
     private function returnRedirect($msg, Request $request)
@@ -163,15 +168,15 @@ class ApiController extends Controller
 
         // Since wardenable messes with our normal method of just collect($model)
         // So we have to map the fillable to a new model
-        $relationships = $input->filter(function ($value){
+        $relationships = $input->filter(function ($value) {
             return is_array($value);
         });
         // Assume that anything not in an array isn't a relationship.
-        $not_relationships = $input->filter(function($value){
+        $not_relationships = $input->filter(function ($value) {
             return !is_array($value);
         });
 
-        /**
+        /*
          * Here we need to calculate the actual values of our model. Since we're
          * just updating what we can then we only need the fillable from the model
          *
@@ -184,9 +189,11 @@ class ApiController extends Controller
         if (method_exists($model, 'getWarden')) {
             $model_array = collect($model->getFillable())->flatMap(function ($value) use ($model) {
                 // If the value is an instance of carbon it will throw an 'Array to String' exception.
-                if ($model->$value instanceof Carbon)
+                if ($model->$value instanceof Carbon) {
                     // Convert the string to
                     return [$value => $model->$value->__toString()];
+                }
+
                 return [$value => $model->$value];
             });
         } else {
@@ -195,11 +202,13 @@ class ApiController extends Controller
         }
 
         // Before filling the model we need to convert all date time stamps into normal timestamps
-        $dates = collect($not_relationships)->filter(function($val, $key) use ($model){
+        $dates = collect($not_relationships)->filter(function ($val, $key) use ($model) {
             return in_array($key, $model->getDates());
-        })->flatMap(function($value, $key) use ($model){
-            if(count(explode(' ', $value)) > 1)
+        })->flatMap(function ($value, $key) use ($model) {
+            if (count(explode(' ', $value)) > 1) {
                 return [$key => Carbon::createFromFormat('Y-m-d H:i:s', $value)];
+            }
+
             return [$key => Carbon::createFromFormat('Y-m-d', $value)];
         });
 
@@ -207,13 +216,14 @@ class ApiController extends Controller
         $model->fill($not_relationships->merge($dates)->diff($model_array)->toArray());
 
         // Make sure the array
-        if(!$relationships->isEmpty()) {
+        if (!$relationships->isEmpty()) {
             foreach ($relationships as $many_relation => $values) {
                 $model->$many_relation()->sync($values, false);
             }
         }
 
         $saved = $model->save();
+
         return $this->modelHasBeenSaved($saved, 'updated', $request);
     }
 
@@ -224,13 +234,13 @@ class ApiController extends Controller
      *
      * @param $input
      * @param $model
+     *
      * @return Collection
      */
     public function validatePut($input, $model, $model_name)
     {
-
-         return collect($input)->filter(function ($value, $key) use ($model, $input) {
-//            // Remove _token
+        return collect($input)->filter(function ($value, $key) use ($model, $input) {
+            //            // Remove _token
             if (!isset($value) || $key === '_token') {
                 return false;
             }
@@ -253,10 +263,12 @@ class ApiController extends Controller
                     $user = new $user_model();
                     if (empty($user->hashable)) {
                         $input[$key] = bcrypt($value);
+
                         return true;
                     }
                 }
             }
+
             return false;
         });
     }
@@ -278,11 +290,11 @@ class ApiController extends Controller
         $model = $this->findModel($model_name, $id);
         if (empty($model->id)) {
             if ($model = $model::withTrashed()->whereId($id)->first()) {
-                $relations = config('kregel.warden.models.' . $model_name . '.relations');
+                $relations = config('kregel.warden.models.'.$model_name.'.relations');
                 foreach ($relations as $rel) {
                     $model->$rel()->forceDelete();
 
-                    $update_event = config('kregel.warden.models.' . $model_name . '.relations.' . $rel . '.delete');
+                    $update_event = config('kregel.warden.models.'.$model_name.'.relations.'.$rel.'.delete');
                     if ($update_event instanceof Closure) {
                         $update_event($model);
                     }
