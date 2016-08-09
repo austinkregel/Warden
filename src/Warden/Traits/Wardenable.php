@@ -40,19 +40,16 @@ trait Wardenable
             $attr = empty($this->getVisible()) ? $this->getFillable() : $this->getVisible();
         }
         $returnable = [];
+
+        $f_model = \FormModel::using('plain')->withModel($this);
         foreach ($attr as $old => $new) {
+            if(!empty($relations = $f_model->getRelationalDataAndModels($this, $old)))
+            {
+                $returnable[$new] = $relations;
+            }
             if (stripos($old, '_id') !== false) {
                 if (!empty($this->$new)) {
-                    $returnable[$new] = $this->{trim($new, '_id')};
-                }
-            } elseif (stripos($old, '_to') !== false) {
-                $a = json_decode($this->$old, true);
-                $keys = array_keys($a);
-                foreach ($keys as $key) {
-                    foreach ($a[$key] as $value) {
-                        $model = config('kregel.warden.models.'.$key.'.model');
-                        $returnable[$old][] = $model::find($value);
-                    }
+                    $returnable[$new] = $relations;
                 }
             } else {
                 if (isset($this->$old)) {
