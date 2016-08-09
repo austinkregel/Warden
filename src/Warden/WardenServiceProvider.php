@@ -15,10 +15,12 @@ class WardenServiceProvider extends ServiceProvider
     protected $defer = false;
 
     /**
-     * Indicates the namespace of this package's routing
+     * Indicates the namespace of this package's routing.
+     *
      * @var string
      */
     protected $namespace = 'Kregel\\Warden\\Http\\Controllers';
+
     /**
      * Register the service provider.
      */
@@ -62,23 +64,22 @@ class WardenServiceProvider extends ServiceProvider
     protected function mapWebRoutes($router)
     {
         $router->group([
-            'namespace' => $this->namespace,
-            'prefix' => config('kregel.warden.route'),
-            'as' => 'warden::',
-            'middleware' => config('kregel.warden.auth.middleware')
+            'namespace'  => $this->namespace,
+            'prefix'     => config('kregel.warden.route'),
+            'as'         => 'warden::',
+            'middleware' => config('kregel.warden.auth.middleware'),
         ], function () use ($router) {
             require __DIR__.'/routes/web.php';
         });
     }
 
-
     protected function mapApiRoutes($router)
     {
         $router->group([
-            'namespace' => $this->namespace,
-            'prefix' => config('kregel.warden.route'). '/api/v1.0',
-            'as' => 'warden::api.',
-            'middleware' => config('kregel.warden.auth.middleware_api')
+            'namespace'  => $this->namespace,
+            'prefix'     => config('kregel.warden.route').'/api/v1.0',
+            'as'         => 'warden::api.',
+            'middleware' => config('kregel.warden.auth.middleware_api'),
         ], function ($router) {
             require __DIR__.'/routes/api.php';
         });
