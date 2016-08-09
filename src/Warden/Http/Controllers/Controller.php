@@ -138,4 +138,12 @@ abstract class Controller extends BaseController
 
         return $returnable;
     }
+
+    protected function emptyModel($request)
+    {
+        if ($request->ajax()) {
+            return response()->json(['message' => 'No resource found!', 'code' => 404], 404);
+        }
+        return response(redirect('404'), 404);
+    }
 }
