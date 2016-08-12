@@ -43,8 +43,7 @@ trait Wardenable
 
         $f_model = \FormModel::using('plain')->withModel($this);
         foreach ($attr as $old => $new) {
-            if(!empty($relations = $f_model->getRelationalDataAndModels($this, $old)))
-            {
+            if (!empty($relations = $f_model->getRelationalDataAndModels($this, $old))) {
                 $returnable[$new] = $relations;
             }
             if (stripos($old, '_id') !== false) {

@@ -2,7 +2,7 @@
 
 return [
     'route' => 'warden',
-    'auth' => [
+    'auth'  => [
         /*
          * Set this to your own custom middleware, just please know that it
          * should ensure that the user is logged in.
@@ -15,7 +15,7 @@ return [
     'views' => [
         'base-layout' => 'spark::layouts.app',
     ],
-    /**
+    /*
      * Just to make sure that there are fewer things to edit,
      * by default we use the auth.model configuration from
      * the default location to ensure this will work oob
@@ -25,20 +25,20 @@ return [
             // For model events themselves, please reference the
             // Eloquent events from the laravel docs website.
             // Can be seen here: https://laravel.com/docs/master/eloquent#events
-            'model' => App\Models\User::class,
+            'model'     => App\Models\User::class,
             'relations' => [
                 'roles' => [
-                    'update' => function($user){
+                    'update' => function ($user) {
                         \Log::info('A users roles has been updated');
                     },
-                    'new' => function ($user){
+                    'new' => function ($user) {
                         \Log::info('A users role has been created');
                     },
-                    'delete' => function ($user){
+                    'delete' => function ($user) {
                         \Log::info('A users role has been deleted/removed');
-                    }
-                ]
-            ]
+                    },
+                ],
+            ],
         ],
 
     ],

@@ -1,13 +1,14 @@
 <?php
-namespace Kregel\Warden;
 
+namespace Kregel\Warden;
 
 class Warden
 {
-
     /**
-     * This will look through the input and remove any unset values
+     * This will look through the input and remove any unset values.
+     *
      * @param $input
+     *
      * @return mixed
      */
     public static function clearInput($input)
@@ -18,6 +19,7 @@ class Warden
                     unset($input[$key]);
                 }
             }
+
             return $input;
         }
 
@@ -34,5 +36,4 @@ class Warden
         $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
-
 }
