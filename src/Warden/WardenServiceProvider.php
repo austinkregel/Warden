@@ -59,7 +59,7 @@ class WardenServiceProvider extends ServiceProvider
         }
     }
 
-    protected function mapWebRoutes($router)
+    protected function mapWebRoutes(Router $router)
     {
         $router->group([
             'namespace' => $this->namespace,

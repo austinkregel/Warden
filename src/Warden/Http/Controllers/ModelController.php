@@ -10,11 +10,6 @@ use Session;
 
 class ModelController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(config('kregel.warden.auth.middleware_name'));
-    }
-
     /**
      * @param string $model_name A key in the warden.models configuration
      *
@@ -79,9 +74,9 @@ class ModelController extends Controller
     protected function getModel($model_name, $id, FormModel $form)
     {
         /*
-       * We need to grab the model from the config and select one entry for
-       * that model from within the database.
-       */
+         * We need to grab the model from the config and select one entry for
+         * that model from within the database.
+         */
         $model = $this->findModel($model_name, $id);
         /*
          * Here we generate the form to update the model using the kregel/formmodel
