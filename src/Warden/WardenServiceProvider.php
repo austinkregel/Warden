@@ -5,7 +5,7 @@ namespace Kregel\Warden;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Route;
-use Kregel\Warden\Warden;
+
 class WardenServiceProvider extends ServiceProvider
 {
     /**
@@ -48,7 +48,6 @@ class WardenServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/config.php' => config_path('kregel/warden.php'),
         ], 'config');
-
     }
 
     /**
@@ -65,7 +64,7 @@ class WardenServiceProvider extends ServiceProvider
 
     protected function mapWebRoutes()
     {
-        if(empty(config('kregel.warden.using.custom-routes'))) {
+        if (empty(config('kregel.warden.using.custom-routes'))) {
             Warden::webRoutes();
         }
     }
@@ -78,7 +77,7 @@ class WardenServiceProvider extends ServiceProvider
             'as'         => 'warden::api.',
             'middleware' => config('kregel.warden.auth.middleware_api'),
         ], function ($router) {
-            if(empty(config('kregel.warden.using.custom-routes'))) {
+            if (empty(config('kregel.warden.using.custom-routes'))) {
                 Warden::apiRoutes();
             }
         });
