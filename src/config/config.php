@@ -2,7 +2,7 @@
 
 return [
     'route' => 'warden',
-    'auth'  => [
+    'auth' => [
         /*
          * Set this to your own custom middleware, just please know that it
          * should ensure that the user is logged in.
@@ -11,6 +11,11 @@ return [
 
         'middleware_api' => ['api'],
 
+    ],
+    'using' => [
+        'csrf' => true,
+        'framework' => 'bootstrap',
+        'custom-routes' => null,
     ],
     'views' => [
         'base-layout' => 'spark::layouts.app',
@@ -25,7 +30,7 @@ return [
             // For model events themselves, please reference the
             // Eloquent events from the laravel docs website.
             // Can be seen here: https://laravel.com/docs/master/eloquent#events
-            'model'     => App\Models\User::class,
+            'model' => App\User::class,
             'relations' => [
                 'roles' => [
                     'update' => function ($user) {
