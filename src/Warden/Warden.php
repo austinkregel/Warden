@@ -21,8 +21,10 @@ class Warden
                     unset($input[$key]);
                 }
             }
+
             return $input;
         }
+
         return $input;
     }
 
@@ -43,9 +45,9 @@ class Warden
     public static function apiRoutes()
     {
         Route::group([
-            'namespace' => 'Kregel\\Warden\\Http\\Controllers',
-            'prefix' => config('kregel.warden.route') . '/api/v1.0',
-            'as' => 'warden::api.',
+            'namespace'  => 'Kregel\\Warden\\Http\\Controllers',
+            'prefix'     => config('kregel.warden.route').'/api/v1.0',
+            'as'         => 'warden::api.',
             'middleware' => config('kregel.warden.auth.middleware_api'),
         ], function ($router) {
             // Should retrieve almost all items...
@@ -73,9 +75,9 @@ class Warden
     public static function webRoutes()
     {
         Route::group([
-            'namespace' => 'Kregel\\Warden\\Http\\Controllers',
-            'prefix' => config('kregel.warden.route'),
-            'as' => 'warden::',
+            'namespace'  => 'Kregel\\Warden\\Http\\Controllers',
+            'prefix'     => config('kregel.warden.route'),
+            'as'         => 'warden::',
             'middleware' => config('kregel.warden.auth.middleware'),
         ], function ($router) {
             Route::get('/', function () {
