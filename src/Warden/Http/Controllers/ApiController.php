@@ -33,7 +33,7 @@ class ApiController extends Controller
     /**
      * @param         $model_name
      * @param Request $request
-     * @param int $paginate
+     * @param int     $paginate
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -54,7 +54,7 @@ class ApiController extends Controller
      */
     public function findModel($model_name, $id = null)
     {
-        $model = config('kregel.warden.models.' . $model_name . '.model');
+        $model = config('kregel.warden.models.'.$model_name.'.model');
         if (empty($id) | !is_numeric($id)) {
             return new $model();
         }
@@ -98,7 +98,7 @@ class ApiController extends Controller
                 // if it's in_array, it's not a closure, just have to sync. Otherwise it's a closure
                 // And we will have to call the closure and pass through the need model to it.
                 $model->$k()->sync($i);
-                $update_event = config('kregel.warden.models.' . $model_name . '.relations.' . $k . '.new');
+                $update_event = config('kregel.warden.models.'.$model_name.'.relations.'.$k.'.new');
                 if ($update_event instanceof Closure) {
                     $update_event($model);
                 }
@@ -120,19 +120,19 @@ class ApiController extends Controller
     protected function modelHasBeenSaved($saved, $type, $request)
     {
         if (!$saved) {
-            return response()->json(['message' => 'Failed to ' . $type. ' resource', 'code' => 422], 422);
+            return response()->json(['message' => 'Failed to '.$type.' resource', 'code' => 422], 422);
         }
         $status = $request->ajax() ? 202 : 200;
         if ($request->ajax()) {
-            return response()->json(['message' => 'Successfully ' . $type . ' resource', 'code' => $status], $status);
+            return response()->json(['message' => 'Successfully '.$type.' resource', 'code' => $status], $status);
         }
         if ($request->has('_redirect')) {
             // Remove the base part of the url, and just grab the tail end of the desired redirect, that way the
             // User can't be redirected away from your website.
-            return $this->returnRedirect('Successfully ' . $type . ' resource', $request);
+            return $this->returnRedirect('Successfully '.$type.' resource', $request);
         }
 
-        return redirect()->back()->with(['message' => 'Successfully ' . $type . ' resource']);
+        return redirect()->back()->with(['message' => 'Successfully '.$type.' resource']);
     }
 
     private function returnRedirect($msg, Request $request)
@@ -207,6 +207,7 @@ class ApiController extends Controller
             if (count(explode(' ', $value)) > 1) {
                 return [$key => Carbon::createFromFormat('Y-m-d H:i:s', $value)->__toString()];
             }
+
             return [$key => Carbon::createFromFormat('Y-m-d', $value)->__toString()];
         });
 //        dd($dates, $not_relationships, $relationships);
@@ -215,10 +216,11 @@ class ApiController extends Controller
 
         // Make sure the array
         if (!$relationships->isEmpty()) {
-            foreach ($relationships as $many_relation => $values)
-                if ($model->$many_relation() instanceof BelongsToMany)
+            foreach ($relationships as $many_relation => $values) {
+                if ($model->$many_relation() instanceof BelongsToMany) {
                     $model->$many_relation()->sync($values, false);
-
+                }
+            }
         }
         $saved = $model->save();
 
@@ -235,8 +237,7 @@ class ApiController extends Controller
      *
      * @return Collection
      */
-    public
-    function validatePut($input, $model, $model_name)
+    public function validatePut($input, $model, $model_name)
     {
         return collect($input)->filter(function ($value, $key) use ($model, $input) {
             // Remove _token
@@ -284,8 +285,7 @@ class ApiController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public
-    function deleteModel($model_name, $id, Request $request)
+    public function deleteModel($model_name, $id, Request $request)
     {
         $this->checkParams(func_get_args());
         $status = $request->ajax() ? 202 : 200;
@@ -293,11 +293,11 @@ class ApiController extends Controller
         $model = $this->findModel($model_name, $id);
         if (empty($model->id)) {
             if ($model = $model::withTrashed()->whereId($id)->first()) {
-                $relations = config('kregel.warden.models.' . $model_name . '.relations');
+                $relations = config('kregel.warden.models.'.$model_name.'.relations');
                 foreach ($relations as $rel) {
                     $model->$rel()->forceDelete();
 
-                    $update_event = config('kregel.warden.models.' . $model_name . '.relations.' . $rel . '.delete');
+                    $update_event = config('kregel.warden.models.'.$model_name.'.relations.'.$rel.'.delete');
                     if ($update_event instanceof Closure) {
                         $update_event($model);
                     }
@@ -319,8 +319,7 @@ class ApiController extends Controller
         return response()->json(['message' => 'Successfully deleted resource', 'code' => $status], $status);
     }
 
-    private
-    function doesModelRelate(Model $model, $relation, $objects)
+    private function doesModelRelate(Model $model, $relation, $objects)
     {
         return FormModel::using('plain')->getRelationalDataAndModels($model, $relation) !== null;
     }
