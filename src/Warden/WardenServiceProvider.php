@@ -71,15 +71,8 @@ class WardenServiceProvider extends ServiceProvider
 
     protected function mapApiRoutes()
     {
-        Route::group([
-            'namespace'  => $this->namespace,
-            'prefix'     => config('kregel.warden.route').'/api/v1.0',
-            'as'         => 'warden::api.',
-            'middleware' => config('kregel.warden.auth.middleware_api'),
-        ], function ($router) {
-            if (empty(config('kregel.warden.using.custom-routes'))) {
-                Warden::apiRoutes();
-            }
-        });
+        if (empty(config('kregel.warden.using.custom-routes'))) {
+            Warden::apiRoutes();
+        }
     }
 }
