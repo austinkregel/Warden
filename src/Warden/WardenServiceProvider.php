@@ -4,7 +4,6 @@ namespace Kregel\Warden;
 
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
-use Route;
 
 class WardenServiceProvider extends ServiceProvider
 {
