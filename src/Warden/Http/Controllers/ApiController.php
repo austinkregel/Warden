@@ -207,7 +207,7 @@ class ApiController extends Controller
             if (count(explode(' ', $value)) > 1) {
                 return [$key => Carbon::createFromFormat('Y-m-d H:i:s', $value)->__toString()];
             }
-
+	    $value = $value === '-0001-11-30' ? '0000-00-00' : $value;
             return [$key => Carbon::createFromFormat('Y-m-d', $value)->__toString()];
         });
 //        dd($dates, $not_relationships, $relationships);
