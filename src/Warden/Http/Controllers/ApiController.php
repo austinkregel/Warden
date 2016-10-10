@@ -27,7 +27,7 @@ class ApiController extends Controller
     {
         $this->model_name = $model_name;
 
-        return $this->getSomeModels($request, 500);
+        return $this->getSomeModels($request, $request, 500);
     }
 
     /**
