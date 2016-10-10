@@ -54,7 +54,6 @@ class ApiController extends Controller
      */
     public function findModel($model_name, $id = null)
     {
-
         $model = config('kregel.warden.models.'.$model_name.'.model');
         if (empty($id) | !is_numeric($id)) {
             return new $model();
@@ -223,7 +222,7 @@ class ApiController extends Controller
                     $model->$many_relation()->sync($values, false);
                 }
             }
-        };
+        }
         $saved = $model->save();
 
         return $this->modelHasBeenSaved($saved, 'updated', $request);
