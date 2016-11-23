@@ -7,6 +7,8 @@ use Closure;
 use FormModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Kregel\Warden\Warden;
@@ -86,6 +88,8 @@ class ApiController extends Controller
         if (!empty($model->password)) {
             $model->password = bcrypt($model->password);
         }
+
+        $this->uploadFileTest($model, $request);
 
         // Update a relationship.
         foreach ($input as $k => $i) {
@@ -323,5 +327,53 @@ class ApiController extends Controller
     private function doesModelRelate(Model $model, $relation, $objects)
     {
         return FormModel::using('plain')->getRelationalDataAndModels($model, $relation) !== null;
+    }
+
+    public function displayMediaPage($model_name, $uuid) {
+        $model = $this->findModel($model_name, $uuid);
+        if (empty($model)) {
+            return $this->emptyModel(request());
+        }
+        $filled = '';
+        $data = (collect($model->getFillable())->filter(function($fillable) {
+            return stripos($fillable, 'path') !== false;
+        })->map(function($fill) use ($model, $uuid,&$filled) {
+            $tmp = explode('.', $uuid)[0];
+            return $model->where($filled = $fill, 'like', '%' . $tmp. '%')->first();
+        })->filter(function ($val) {
+            return !empty($val);
+        }))->first();
+
+
+        return response()->make(file_get_contents(storage_path('app/uploads/'.$data->$filled)))
+            ->header('Content-type',mime_content_type(storage_path('app/uploads/'.$data->$filled)))
+            ->header('Content-length', filesize(storage_path('app/uploads/'.$data->$filled)));
+    }
+
+    /**
+     * Upload the file
+     * @param Model $model
+     * @param Request $request
+     * @return void
+     */
+    private function uploadFileTest($model, Request $request) {
+        // Filter through all the uploaded files, only grabbing the files in our
+        // Fillable, (we don't want any extra things)
+        $valid_files = collect($request->allFiles())->filter(function($file, $key) use ($model) {
+            return in_array($key, $model->getFillable());
+        });
+
+        //  For each file process the upload.
+        // Of course, if the collection of valid_files is empty, nothing will happen.
+        $valid_files->each(function(\Illuminate\Http\UploadedFile $file, $key) use ($model) {
+            $ext = $file->guessExtension();
+            $name = Warden::generateUUID().'.'.$ext;
+            $fs = new Filesystem();
+            $fs->makeDirectory($file_path = storage_path('app/uploads'), 0755, true, true);
+
+            $model->$key = $name;
+
+            $file->move($file_path, $name);
+        });
     }
 }

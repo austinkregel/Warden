@@ -50,6 +50,7 @@ class Warden
             'as'         => 'warden::api.',
             'middleware' => config('kregel.warden.auth.middleware_api'),
         ], function ($router) {
+            Route::get('media/{model}/{uuid}', ['as' => 'media', 'uses' => 'ApiController@displayMediaPage']);
             // Should retrieve almost all items...
             Route::get('{model}s', ['as' => 'get-all', 'uses' => 'ApiController@getAllModels']);
             // Should retrieve some items...
@@ -88,5 +89,9 @@ class Warden
             Route::get('{model}s/manage', ['as' => 'models', 'uses' => 'ModelController@getModelList']);
             Route::get('{model}/manage/{id}', ['as' => 'model', 'uses' => 'ModelController@getModel']);
         });
+    }
+
+    public static function imagePath($path){
+
     }
 }
