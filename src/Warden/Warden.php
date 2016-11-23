@@ -91,7 +91,7 @@ class Warden
         });
     }
 
-    public static function imagePath($path){
-
+    public static function imagePath($path)
+    {
     }
 }

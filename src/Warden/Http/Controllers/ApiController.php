@@ -329,43 +329,48 @@ class ApiController extends Controller
         return FormModel::using('plain')->getRelationalDataAndModels($model, $relation) !== null;
     }
 
-    public function displayMediaPage($model_name, $uuid) {
+    public function displayMediaPage($model_name, $uuid)
+    {
         $model = $this->findModel($model_name, $uuid);
         if (empty($model)) {
             return $this->emptyModel(request());
         }
         $filled = '';
-        $data = (collect($model->getFillable())->filter(function($fillable) {
+        $data = (collect($model->getFillable())->filter(function ($fillable) {
             return stripos($fillable, 'path') !== false;
-        })->map(function($fill) use ($model, $uuid,&$filled) {
+        })->map(function ($fill) use ($model, $uuid, &$filled) {
             $tmp = explode('.', $uuid)[0];
-            return $model->where($filled = $fill, 'like', '%' . $tmp. '%')->first();
+
+            return $model->where($filled = $fill, 'like', '%'.$tmp.'%')->first();
         })->filter(function ($val) {
             return !empty($val);
         }))->first();
 
 
         return response()->make(file_get_contents(storage_path('app/uploads/'.$data->$filled)))
-            ->header('Content-type',mime_content_type(storage_path('app/uploads/'.$data->$filled)))
+            ->header('Content-type', mime_content_type(storage_path('app/uploads/'.$data->$filled)))
             ->header('Content-length', filesize(storage_path('app/uploads/'.$data->$filled)));
     }
 
     /**
-     * Upload the file
-     * @param Model $model
+     * Upload the file.
+     *
+     * @param Model   $model
      * @param Request $request
+     *
      * @return void
      */
-    private function uploadFileTest($model, Request $request) {
+    private function uploadFileTest($model, Request $request)
+    {
         // Filter through all the uploaded files, only grabbing the files in our
         // Fillable, (we don't want any extra things)
-        $valid_files = collect($request->allFiles())->filter(function($file, $key) use ($model) {
+        $valid_files = collect($request->allFiles())->filter(function ($file, $key) use ($model) {
             return in_array($key, $model->getFillable());
         });
 
         //  For each file process the upload.
         // Of course, if the collection of valid_files is empty, nothing will happen.
-        $valid_files->each(function(\Illuminate\Http\UploadedFile $file, $key) use ($model) {
+        $valid_files->each(function (\Illuminate\Http\UploadedFile $file, $key) use ($model) {
             $ext = $file->guessExtension();
             $name = Warden::generateUUID().'.'.$ext;
             $fs = new Filesystem();
