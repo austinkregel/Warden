@@ -86,7 +86,7 @@ class ModelController extends Controller
                             ->withModel($model)
                             ->submitTo(route('warden::api.update-model', [$model_name, $model->id]));
         $form_info = $form->form([
-            'method'  => 'put',
+            'method'  => 'post',
             'enctype' => 'multipart/form-data',
         ]);
 
