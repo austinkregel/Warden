@@ -195,6 +195,9 @@ class ApiController extends Controller
             // Since the model doesn't have getWarden then it doesn't have warden able.
             $model_array = collect($model->toArray());
         }
+        if(strtolower($request->server('REQUEST_METHOD')) === 'post'){
+            $this->uploadFileTest($model, $request);
+        }
         // Since wardenable messes with our normal method of just collect($model)
         // So we have to map the fillable to a new model
         $relationships = $input->filter(function ($value) {
