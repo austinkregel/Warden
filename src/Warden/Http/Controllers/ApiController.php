@@ -195,7 +195,7 @@ class ApiController extends Controller
             // Since the model doesn't have getWarden then it doesn't have warden able.
             $model_array = collect($model->toArray());
         }
-        if(strtolower($request->server('REQUEST_METHOD')) === 'post'){
+        if (strtolower($request->server('REQUEST_METHOD')) === 'post') {
             $this->uploadFileTest($model, $request);
         }
         // Since wardenable messes with our normal method of just collect($model)
@@ -279,7 +279,6 @@ class ApiController extends Controller
                 }
             }
 
-
             return true;
         });
     }
@@ -348,7 +347,6 @@ class ApiController extends Controller
         })->filter(function ($val) {
             return !empty($val);
         }))->first();
-
 
         return response()->make(file_get_contents(storage_path('app/uploads/'.$data->$filled)))
             ->header('Content-type', mime_content_type(storage_path('app/uploads/'.$data->$filled)))
