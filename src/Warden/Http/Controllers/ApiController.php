@@ -371,7 +371,7 @@ class ApiController extends Controller
 
         //  For each file process the upload.
         // Of course, if the collection of valid_files is empty, nothing will happen.
-        $valid_files->each(function (\Illuminate\Http\UploadedFile $file, $key) use ($model) {
+        $valid_files->each(function (\Illuminate\Http\UploadedFile $file, $key) use (&$model) {
             $ext = $file->guessExtension();
             $name = Warden::generateUUID().'.'.$ext;
             $fs = new Filesystem();
