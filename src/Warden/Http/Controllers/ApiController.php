@@ -89,7 +89,6 @@ class ApiController extends Controller
             $model->password = bcrypt($model->password);
         }
 
-        $this->uploadFileTest($model, $request);
 
         // Update a relationship.
         foreach ($input as $k => $i) {
@@ -108,6 +107,7 @@ class ApiController extends Controller
                 }
             }
         }
+        $this->uploadFileTest($model, $request);
 
         return $this->modelHasBeenSaved($model->save(), 'created', $request);
     }
