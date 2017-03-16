@@ -89,7 +89,6 @@ class ApiController extends Controller
             $model->password = bcrypt($model->password);
         }
 
-
         // Update a relationship.
         foreach ($input as $k => $i) {
             // If there are no relations for this point just break.
