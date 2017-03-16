@@ -360,7 +360,7 @@ class ApiController extends Controller
      *
      * @return void
      */
-    private function uploadFileTest($model, Request $request)
+    private function uploadFileTest(&$model, Request $request)
     {
         // Filter through all the uploaded files, only grabbing the files in our
         // Fillable, (we don't want any extra things)
